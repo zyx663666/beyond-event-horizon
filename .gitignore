@@ -7,3 +7,10 @@ public/experience-stills/
 *.zip
 .env.local
 .env.*.local
+# Retired local reference imagery and one-off browser diagnostics.
+/REPORT.md
+/public/cosmos/carina-webb.png
+/public/cosmos/crab-webb.png
+/scripts/verify-*.cjs
+/scripts/diagnose-journey.cjs
+/scripts/image-difference.cjs
