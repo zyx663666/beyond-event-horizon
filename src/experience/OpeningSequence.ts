@@ -10,7 +10,7 @@ export function openingState(t:number){
 }
 export class OpeningSequence {
  readonly element=document.createElement('section');
- constructor(){this.element.className='opening-sequence';this.element.innerHTML=`<h1>${e(opening.title.en)}</h1><p class="opening-chinese">${e(opening.title.zh)}</p><div class="opening-theme">${e(opening.theme.en)}<span>${e(opening.theme.zh)}</span></div>`;}
+ constructor(){this.element.className='opening-sequence';this.element.innerHTML=`<h1>${e(opening.title.zh)}</h1><p class="opening-chinese">${e(opening.title.en)}</p><div class="opening-theme">${e(opening.theme.zh)}<span>${e(opening.theme.en)}</span></div>`;}
  update(t:number){
   const s=openingState(t);this.element.hidden=!s.active||t>=23;
   this.element.style.opacity=String(s.title);

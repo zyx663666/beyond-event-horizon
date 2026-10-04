@@ -1,0 +1,12 @@
+{
+  "file": "audio/score.mp3",
+  "volume": 0.42,
+  "enableOnJourney": true,
+  "fadeIn": 4,
+  "fadeOut": 5,
+  "offsetSeconds": 0,
+  "loop": false,
+  "highSpeedGain": 0.24,
+  "credits": "continue",
+  "publishAllowed": false
+}

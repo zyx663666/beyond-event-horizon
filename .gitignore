@@ -14,3 +14,11 @@ public/experience-stills/
 /scripts/verify-*.cjs
 /scripts/diagnose-journey.cjs
 /scripts/image-difference.cjs
+
+# Private local inputs and editor caches never enter the release.
+.env
+.env.*
+!.env.example
+.codex-remote-attachments/
+.vite/
+*.tsbuildinfo

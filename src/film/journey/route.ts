@@ -60,7 +60,8 @@ export const JOURNEY_CUES = [
   { t: 150, id: 'disruption:observe' }, { t: 291, id: 'horizon:cross' },
 ] as const;
 export class JourneyController {
-  time = 0; playing = true;
+  time = 0; playing = true; rate = 1;
+  setRate(rate:number) { if(Number.isFinite(rate)&&rate>=0&&rate<=4)this.rate=rate; }
   private readonly listeners = new Set<(cue: typeof JOURNEY_CUES[number]) => void>();
   constructor(private readonly duration: number,private readonly offset=0) {}
   seek(t: number) { if (Number.isFinite(t)) this.time = Math.max(0, Math.min(this.duration, t)); }
@@ -68,7 +69,7 @@ export class JourneyController {
   hold() { this.playing = false; }
   replay(id: JourneyNodeId) { this.navigate(id, true); }
   onCue(fn: (cue: typeof JOURNEY_CUES[number]) => void) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
-  advance(dt: number) { if (!this.playing || !Number.isFinite(dt) || dt <= 0) return; const before = this.time; this.seek(this.time + dt); for (const cue of JOURNEY_CUES) if (cue.t+this.offset > before && cue.t+this.offset <= this.time) this.listeners.forEach(fn => fn(cue)); if (this.time === this.duration) this.hold(); }
+  advance(dt: number) { if (!this.playing || !Number.isFinite(dt) || dt <= 0) return; const before = this.time; this.seek(this.time + dt*this.rate); for (const cue of JOURNEY_CUES) if (cue.t+this.offset > before && cue.t+this.offset <= this.time) this.listeners.forEach(fn => fn(cue)); if (this.time === this.duration) this.hold(); }
 }
 
 

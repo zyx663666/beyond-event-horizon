@@ -35,14 +35,14 @@ export class RendererHost {
     this.renderer.info.autoReset = false;
     this.renderer.debug.onShaderError = (context, program, vertex, fragment) => {
       this.shaderErrors++;
-      report('Shader compilation failed — see console diagnostics.');
+      report('着色器编译失败 / SHADER COMPILATION FAILED');
       console.error('[BEH shader]', context.getProgramInfoLog(program), context.getShaderInfoLog(vertex), context.getShaderInfoLog(fragment));
       console.error(context.getShaderSource(vertex), context.getShaderSource(fragment));
     };
     this.onLost = event => {
       event.preventDefault();
       this.contextLost = true;
-      report('WebGL context lost. Waiting for restoration…');
+      report('成像链路恢复中 / RESTORING WEBGL CONTEXT');
     };
     this.onRestored = () => { this.contextLost = false; recover(); };
     canvas.addEventListener('webglcontextlost', this.onLost);

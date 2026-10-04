@@ -16,4 +16,5 @@ assert.ok(files.every(file => !/stills|artifacts|\.log$|\.map$|carina-webb|crab-
 const scripts = files.filter(file => file.endsWith('.js')).map(file => readFileSync(file, 'utf8')).join('\n');
 assert.ok(scripts.includes(`${base}cosmos/`), 'Texture loader did not inherit Vite base');
 assert.ok(scripts.includes(`${base}lensing/`), 'Lookup-table loader did not inherit Vite base');
+assert.ok(!scripts.includes('QA 音频测试信号')&&!scripts.includes('QA 重建 WebGL'), 'Developer media/context harness entered production');
 console.log(`Production paths checked: ${base} · ${files.length} files · runtime assets only`);

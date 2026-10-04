@@ -1,8 +1,8 @@
-# Beyond Event Horizon / 事件视界之外
+# 事件视界之外 / Beyond Event Horizon
 
 A realtime scientific film and deep-space observatory built with Vite, TypeScript, Three.js and WebGL2. 硬科幻为骨，科幻艺术为皮。
 
-Default entry: **OBSERVATORY / 深空观测台**. START JOURNEY launches the directed film; FREE OBSERVATION offers a stationary observer with drag/arrow look, Home recenter and optical zoom.
+默认入口：**深空观测台 / OBSERVATORY**。开始航行 / START JOURNEY launches the directed film; 自由观测 / FREE OBSERVATION offers a stationary observer with drag/arrow look, Home recenter and optical zoom.
 
 The presentation uses a single 16:9 stage with letterboxing. 2560×1440 is the target render profile; `quality=ultra` permits 3840×2160. Other aspect ratios keep the same layout.
 
@@ -27,7 +27,13 @@ The original 6:30 journey is preserved. A 0:36 opening and separate 0:36 archive
 
 Edit `src/content/credits.ts` to replace author, team, school, year, roles and final-message placeholders. The title is shared by the home screen, opening and credits. Opening theme copy lives in `src/content/opening.ts`; chapter, scientific, poetic, event and instrument text have separate files in the same content directory.
 
-The film offers pause, replay, a mission timeline, chapter selection, optional temporary sound and fullscreen. Sound starts only after the SOUND button is activated. WebGL2 and desktop hardware acceleration are required.
+The lower-left navigation terminal offers 音乐链路 / MUSIC LINK and 航行等级 / NAVIGATION DRIVE. STANDBY holds the film; AHEAD I, II, III and DEEP TRANSIT use 0.55, 1, 1.75 and 4 times the film clock. AHEAD II is the director standard. This is distinct from the archived physical velocity shown in c. All scene, subtitle, event, credit and media timing shares the film clock. Music starts only through START JOURNEY or a music-link click; direct entry and refresh remain silent. Pause, hidden tabs and WebGL recovery suspend audio. WebGL2 and desktop hardware acceleration are required.
+
+## Replace the score
+
+No music asset is shipped yet, as requested. Place your authorized MP3 at `public/audio/score.mp3`, edit `src/content/audio.config.json`, and restart Vite. `src/content/audio.ts` exposes the typed settings. Set `publishAllowed: true` only when public redistribution is permitted; production builds block unapproved audio. The file automatically inherits the Vite base and runtime asset manifest. No missing-file request is made before a score exists.
+
+Chinese is the primary visual language and English is secondary. UI content is in `src/content/`; language order is in `language.ts`, flight controls in `flight.ts`. Existing author/team/school/final-message placeholders remain editable in `credits.ts`. See [release integration](docs/release-pass.md).
 
 ## GitHub Pages
 

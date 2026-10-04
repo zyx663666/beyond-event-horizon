@@ -1,25 +1,26 @@
 /** Shared bilingual interface copy. Scientific / poetic content has separate files. */
-export const ui = {
-  mission: 'DEEP SPACE ARCHIVE / BH–A17', fictional: 'FICTIONAL TARGET / 虚构深空目标',
+import { languageText } from './language';
+const copy = {
+  mission: '深空观测档案 / DEEP SPACE ARCHIVE · BH–A17', fictional: 'FICTIONAL TARGET / 虚构深空目标',
   observatory: 'OBSERVATORY', observatoryZh: '深空观测台', live: 'LIVE OBSERVATION / 实时观测',
   verified: 'ARCHIVE VERIFIED / 档案校验完成', online: 'OBSERVER ONLINE / 观测者在线',
   preparing: 'CALIBRATING OPTICS / 光学系统校准中', ready: 'VISUAL CORE ONLINE / 成像系统在线',
   homeIntro: 'Follow the light. Read the unknown.', homeIntroZh: '循光而行，观测未知。',
   start: 'START JOURNEY', startZh: '开始航行', free: 'FREE OBSERVATION', freeZh: '自由观测',
-  duration: '00:36 OPENING + 06:30 JOURNEY + 00:36 CREDITS', homeTag: 'A REALTIME SCIENTIFIC FILM / 实时科学影像',
-  object: 'BH–A17 / SCHWARZSCHILD', model: 'IDEALIZED MODEL / 理想化模型',
+  duration: '片头 00:36 · 航程 06:30 · 片尾 00:36 / OPENING · JOURNEY · CREDITS', homeTag: 'A REALTIME SCIENTIFIC FILM / 实时科学影像',
+  object: 'BH–A17 · 史瓦西黑洞 / SCHWARZSCHILD', model: 'IDEALIZED MODEL / 理想化模型',
   freeHint: 'DRAG / ARROWS TO LOOK · HOME TO RECENTER', freeHintZh: '拖动或方向键转向 · Home 回正',
   zoom: 'OPTICAL ZOOM / 光学变焦', reset: 'RECENTER / 回正', back: 'OBSERVATORY / 观测台',
   fixedObserver: 'STATION KEPT / 定点观测', stationClock: 'SESSION CLOCK / 本次观测',
   freeFall: 'FREE FALL / 自由落体', relayRadius: 'B–01 · r = 36 Rs',
   targetDistance: 'TARGET DISTANCE / 目标距离', epoch: 'MISSION EPOCH / 任务纪年',
-  speed: 'TRANSIT / 航程时率', speedNote: 'ARCHIVE TIME / SCREEN TIME · 档案 / 影片',
+  speed: '档案航速 / ARCHIVE VELOCITY', speedNote: '距离与纪年推算 / ARCHIVE ESTIMATE',
   homeDistance: 'FROM HOME / 离家距离', homeRtt: 'HOME RTT / 平直空间光行时',
   proper: 'LOCAL τ / 本地固有时', radius: 'AREAL RADIUS / 面积半径',
   horizonGap: 'r − Rs / 视界坐标差', gapNote: 'COORDINATE GAP ≠ PROPER DISTANCE / 非固有距离',
   frequency: 'OUTBOUND ν / 外发频比', relay: 'LOCAL RELAY / 本地中继',
-  active: 'RELAY ACTIVE', delayed: 'RELAY DELAYED', lastAck: 'LAST ACK RECEIVED',
-  noPath: 'NO OUTBOUND PATH', noReply: 'NO REPLY / 无回信',
+  active: '中继在线 / RELAY ACTIVE', delayed: '中继延迟 / RELAY DELAYED', lastAck: '收到最后确认 / LAST ACK RECEIVED',
+  noPath: '无外发光路 / NO OUTBOUND PATH', noReply: 'NO REPLY / 无回信',
   inbound: 'INBOUND FROM BEFORE CROSSING / 跨越前发出的回声仍可抵达',
   remoteUnconfirmed: 'REMOTE NOW UNCONFIRMED / 远端此刻不可确认',
   archived: 'ARCHIVED LINK / 档案链路', continues: 'RECORD CONTINUES / 记录继续',
@@ -38,11 +39,12 @@ export const ui = {
   scope: 'MODEL / SOURCES / 模型与来源',
   recordComplete: 'RECORD COMPLETE', recordCompleteZh: '记录完成',
   archiveClosed: 'ARCHIVE CLOSED', archiveClosedZh: '档案关闭',
-  createdBy: 'CREATED BY / 创作', team: 'TEAM / 团队', school: 'SCHOOL / DEPARTMENT', year: 'YEAR / 年份',
-  sources: 'Earth texture: NASA / GSFC SVS · Blue Marble · Reto Stöckli',
-  creditsModel: 'Schwarzschild light propagation · Procedural universe · Artistic epilogue',
-  scienceBoundary: 'BH–A17 是距起点约 1200 光年的虚构目标。前半程剪辑约 6000 年的任务档案，尺度和周期经过压缩，不表示超光速航行。地球、主航程和观测对象为实时三维场景；地表使用 NASA / GSFC SVS Blue Marble 纹理（Reto Stöckli）。黑洞来光使用 Schwarzschild 模型；恒星撕裂、气体捕获与残骸衰减为动力学示意，残骸衰减假设耗散，不是完整流体模拟。右侧光路和光锥图为仪器示意，不能当作天体实体表面。r − Rs 是面积半径的坐标差，不是局部测得的固有距离。外发频比是相对静止中继 B–01（r=36 Rs）的模型预测；视界内不存在向该中继逃逸的外发光路，但跨越前发出的入射回声仍可抵达。远端读数来自已收到的旧回声，绝非远端此刻。科学注释采用平滑时率重映射，绝不冻结物理钟；航程 5:30（含片头 6:06）在 r=0.25 Rs 主动停止模型演示，航程 5:34（含片头 6:10）起为艺术演绎，并非奇点内部预测。含片头 7:06 起进入独立片尾。声音为可选临时合成。',
+  createdBy: 'CREATED BY / 创作', team: 'TEAM / 团队', school: '学校与院系 / SCHOOL · DEPARTMENT', year: 'YEAR / 年份',
+  sources: '地表纹理：NASA · GSFC SVS · Blue Marble · Reto Stöckli / EARTH TEXTURE',
+  creditsModel: '史瓦西光路 · 程序化宇宙 · 艺术尾声 / SCHWARZSCHILD OPTICS · PROCEDURAL COSMOS · ARTISTIC EPILOGUE',
+  scienceBoundary: 'BH–A17 是距起点约 1200 光年的虚构目标。前半程剪辑约 6000 年的任务档案，尺度和周期经过压缩，不表示超光速航行。地球、主航程和观测对象为实时三维场景；地表使用 NASA / GSFC SVS Blue Marble 纹理（Reto Stöckli）。黑洞来光使用 Schwarzschild 模型；恒星撕裂、气体捕获与残骸衰减为动力学示意，残骸衰减假设耗散，不是完整流体模拟。右侧光路和光锥图为仪器示意，不能当作天体实体表面。r − Rs 是面积半径的坐标差，不是局部测得的固有距离。外发频比是相对静止中继 B–01（r=36 Rs）的模型预测；视界内不存在向该中继逃逸的外发光路，但跨越前发出的入射回声仍可抵达。远端读数来自已收到的旧回声，绝非远端此刻。科学注释采用平滑时率重映射，绝不冻结物理钟；航程 5:30（含片头 6:06）在 r=0.25 Rs 主动停止模型演示，航程 5:34（含片头 6:10）起为艺术演绎，并非奇点内部预测。含片头 7:06 起进入独立片尾。音乐为可替换的独立链路；航行档位调节影片时钟，不改变模型内物理速度。',
 };
+export const ui=Object.fromEntries(Object.entries(copy).map(([key,value])=>[key,languageText(value)])) as typeof copy;
 export const timelineLabels = {
   earth: ['EARTH','地球'], solar: ['SOLAR','太阳系'], galactic: ['COURSE','银河方向'],
   nebula: ['DEEP SPACE','深空'], binary: ['BINARY','双星'], pulsar: ['PULSAR','脉冲星'],
@@ -52,5 +54,5 @@ export const timelineLabels = {
 export const objectLabels: Record<string,string> = {
  earth:'EARTH / 近地轨道',solar:'SOLAR SYSTEM / 太阳系',galaxy:'GALACTIC BEARING / 银河方向',
  nebula:'STAR FORMATION / 恒星形成区',binary:'BINARY SYSTEM / 双星系统',pulsar:'PULSAR + REMNANT / 脉冲星与遗迹',
- target:'BH–A17 / 目标接管',blackhole:'BH–A17 / SCHWARZSCHILD',network:'LIGHT NETWORK / 光之联系',universe:'COSMIC ARCHIVE / 宇宙回望',
+ target:'BH–A17 / 目标接管',blackhole:'BH–A17 · 史瓦西黑洞 / SCHWARZSCHILD',network:'LIGHT NETWORK / 光之联系',universe:'COSMIC ARCHIVE / 宇宙回望',
 };

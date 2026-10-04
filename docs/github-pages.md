@@ -22,7 +22,7 @@ The workflow uses Node.js 24, pinned official Actions, dependency caching and mi
 
 Shaders are bundled through `?raw`. Earth texture and scientific lookup data use `import.meta.env.BASE_URL`. All mode links are query-relative, retaining the deployment directory. The favicon is rewritten by Vite. There are no external fonts, audio files or model downloads: system fonts, optional synthesized audio and procedural models are used.
 
-The build disables copying the whole public folder. `scripts/deploy-assets.mjs` includes the Earth texture, attribution, favicon and four lensing/orbit assets; Vite adds JS/CSS and `.nojekyll`. Diagnostic stills, old Webb backgrounds, temporary archives, logs and source maps are excluded. `check-dist` checks file presence, HTML base links, runtime directory references and excluded-file patterns. Add new runtime assets to the manifest when introduced.
+The build disables copying the whole public folder. `scripts/deploy-assets.mjs` includes the Earth texture, attribution, favicon and four lensing/orbit assets; Vite adds JS/CSS and `.nojekyll`. Diagnostic stills, old Webb backgrounds, temporary archives, logs and source maps are excluded. `check-dist` checks file presence, HTML base links, runtime directory references and excluded-file patterns. Add new runtime assets to the manifest when introduced. The optional score is discovered from `src/content/audio.config.json`, included only when present, and requires a public redistribution declaration. No music or test tones ship in this release. The workflow also runs the timeline/audio tests before building.
 
 ## Browser behavior
 
