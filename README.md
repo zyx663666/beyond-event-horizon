@@ -33,7 +33,9 @@ The film offers pause, replay, a mission timeline, chapter selection, optional t
 
 Repository: <https://github.com/zyx663666/beyond-event-horizon>
 
-Expected site URL: <https://zyx663666.github.io/beyond-event-horizon/>
+Published site: <https://tianshanyun.cloud/beyond-event-horizon/>
+
+The standard Pages address <https://zyx663666.github.io/beyond-event-horizon/> redirects to the account's existing custom domain. This project did not change its DNS or domain configuration.
 
 Pushes to main build and deploy via `.github/workflows/deploy-pages.yml`. In repository Settings → Pages, set Source to GitHub Actions. The workflow obtains the site base pathname from Pages configuration. Local development continues to use `/`.
 

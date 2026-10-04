@@ -60,9 +60,9 @@ OpeningSequence 由统一影片时钟驱动 smoothstep 曲线，支持重播和�
 
 ## Pages 与显示验证
 
-新增 `.github/workflows/deploy-pages.yml`、`vite.config.mjs`、`scripts/deploy-assets.mjs` 与 `scripts/check-dist.mjs`。Pages Source 已在仓库设置为 GitHub Actions；源代码推送仍需完成 Git Credential Manager 设备授权。部署完成证据另行记录，未部署时不能把预期网址当作已经上线。
+新增 `.github/workflows/deploy-pages.yml`、`vite.config.mjs`、`scripts/deploy-assets.mjs` 与 `scripts/check-dist.mjs`。公开仓库已推送，Pages Source 为 GitHub Actions；[首次构建与部署](https://github.com/zyx663666/beyond-event-horizon/actions/runs/37170044522)于 2026-10-04 成功。网站继承账号既有域名，实际 HTTPS 地址为 https://tianshanyun.cloud/beyond-event-horizon/ ，标准 github.io 项目地址会重定向至此。本轮没有修改域名和 DNS。
 
-本地 `/beyond-event-horizon/` 生产构建与资源检查通过：11 个输出文件，含仅运行时所需的纹理和科学查表；Shader 打包、模式链接为相对 query，去除旧静态背景、截图、日志、压缩包和 sourcemap。部署/域名说明见 [GitHub Pages guide](github-pages.md)。
+本地 `/beyond-event-horizon/` 生产构建与资源检查通过：11 个输出文件，含仅运行时所需的纹理和科学查表；Shader 打包、模式链接为相对 query，去除旧静态背景、截图、日志、压缩包和 sourcemap。上线后首页、地球纹理、图标及四个科学数据文件均返回 HTTP 200，Edge 中 Observatory 与 Free Observation 正常打开，未观察到控制台错误。部署/域名说明见 [GitHub Pages guide](github-pages.md)。
 
 Edge 实际 CSS viewport 2560×1440 与 3840×2160 已核对，stage 为对应 16:9，抽查仪器无横向溢出，右侧解释与底部遥测不相交。4K 布局抽查使用 target 缓冲区，不能算 ultra 原生 4K 性能验证。非 16:9 使用同一画幅与黑边，未增加竖屏布局。1080p 兼容预览此前已抽查。40 项单元检查通过，子路径生产构建通过，关键帧 Shader 错误为 0。
 

@@ -10,7 +10,9 @@ The repository is a static Vite + TypeScript + Three.js/WebGL2 application. GitH
 4. A main-branch push runs `.github/workflows/deploy-pages.yml`. If the first push preceded enabling Pages, use Actions → Deploy Beyond Event Horizon → Run workflow.
 5. A successful deployment appears in the github-pages environment. The URL format is `https://USERNAME.github.io/REPOSITORY/`.
 
-This project's repository is `https://github.com/zyx663666/beyond-event-horizon`; its expected site root is `https://zyx663666.github.io/beyond-event-horizon/`.
+This project's repository is `https://github.com/zyx663666/beyond-event-horizon`. The published HTTPS site is `https://tianshanyun.cloud/beyond-event-horizon/`. The standard address `https://zyx663666.github.io/beyond-event-horizon/` redirects to that existing account-level domain. No DNS or domain setting was changed for this project.
+
+Initial deployment succeeded on 2026-10-04: [build and deploy run](https://github.com/zyx663666/beyond-event-horizon/actions/runs/37170044522). The published home page and every manifest asset returned HTTP 200; online Observatory and Free Observation were opened in Edge, with no console errors observed.
 
 The workflow uses Node.js 24, pinned official Actions, dependency caching and minimum job permissions. Sequence: checkout → read Pages metadata → `npm ci` → `npm run build` → `npm run check:dist` → upload dist artifact → deploy Pages. Only the deploy job gets pages write and OIDC token permission. Concurrent pushes replace an older in-progress deployment.
 
