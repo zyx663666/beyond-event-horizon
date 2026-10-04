@@ -1,0 +1,12 @@
+{
+  "width": 1536,
+  "height": 80,
+  "minInverseRadius": 0.010416666666666666,
+  "maxInverseRadius": 0.125,
+  "angularEpsilon": 0.00002,
+  "integrator": "RK4",
+  "step": 0.012,
+  "units": "Rs=1",
+  "floats": 122880,
+  "sha256": "6d4ed9cc44c50475cb0a447794631645280010889c743d08d135fe0af7b40aa9"
+}

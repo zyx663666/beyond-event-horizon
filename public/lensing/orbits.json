@@ -1,0 +1,17 @@
+{
+  "width": 1024,
+  "height": 320,
+  "layers": 48,
+  "maxPhi": 9.42477796076938,
+  "minInverseRadius": 0.010416666666666666,
+  "maxInverseRadius": 0.125,
+  "split": 0.25,
+  "channels": [
+    "Rs/r",
+    "c*lookback/Rs - observer tortoise radius"
+  ],
+  "encoding": "RG16F little-endian gzip",
+  "bytes": 62914560,
+  "compressedBytes": 15602690,
+  "sha256": "3377529ebdf341085c320d7e032d39895dae5625a078384ccd4a8e4e095d185e"
+}

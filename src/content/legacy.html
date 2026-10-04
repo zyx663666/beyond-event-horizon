@@ -1,0 +1,67 @@
+    <div class="vignette" aria-hidden="true"></div>
+    <header class="masthead">
+      <div class="identity"><span class="eyebrow"><i></i> OBSERVER STATION / YOU ARE HERE</span><h1>BEYOND<br>EVENT HORIZON<span class="period">.</span></h1><p>事件视界之外</p><span id="status" role="status">INITIALIZING</span></div>
+      <div class="edition"><span>UNIFIED OBSERVATORY</span><strong>005</strong><span>PROTOTYPE 0.5 <b id="quality">TARGET</b></span><span data-console="mode">GUIDED FLIGHT / CORE TRACK</span></div>
+    </header>
+    <div class="axis axis-left" aria-hidden="true"><span>−</span><span>+</span><span>−</span></div>
+    <div class="axis axis-right" aria-hidden="true"><span>−</span><span>+</span><span>−</span></div>
+    <div class="sight" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div id="beacon-marker" hidden aria-hidden="true"><i></i><span>B-01<small>REFERENCE RELAY</small></span></div>
+    <p id="view-help">拖动视窗 / 方向键转动视线 <span>· HOME 回正</span></p>
+    <section class="lens-instrument" aria-label="引力成像实验">
+      <h2>04 / CURVED LIGHT <span>引力成像</span></h2>
+      <div class="control-row"><button id="lensing-toggle" aria-pressed="true">弯曲光路</button><button id="grid-toggle" aria-pressed="false">标定网格</button><button id="frequency-toggle" type="button" aria-pressed="true">频移开启</button><button id="orders-toggle" type="button" aria-pressed="false">光路分层</button></div>
+      <p id="frequency-readings"></p>
+      <p id="lens-state">S-01 / 远方参考星</p><p id="lens-readings"></p>
+      <small>Schwarzschild 光路 · 不透明薄盘</small>
+      <div class="journey-heading"><span id="journey-stage"></span><span id="journey-time"></span></div>
+      <progress id="journey-progress" max="300" value="0" aria-label="接近航程"></progress>
+    </section>
+    <div id="reference-a" class="reference-marker" hidden aria-hidden="true">S-01 / A</div>
+    <div id="reference-b" class="reference-marker" hidden aria-hidden="true">S-01 / B</div>
+    <aside id="debug" aria-label="只读开发诊断">
+      <div class="debug-heading">CORE TELEMETRY <span>LIVE</span></div>
+      <div class="metric"><strong data-field="fps">—</strong><span>FPS</span></div>
+      <dl>
+        <dt>FRAME / P95</dt><dd><span data-field="frame">—</span> / <span data-field="p95">—</span></dd>
+        <dt>CPU FRAME</dt><dd data-field="cpu">—</dd>
+        <dt>DRAW BUFFER</dt><dd data-field="resolution">—</dd>
+        <dt>ELAPSED</dt><dd data-field="elapsed">—</dd>
+        <dt>POSITION XYZ</dt><dd data-field="position">—</dd>
+        <dt>DISTANCE</dt><dd data-field="distance">—</dd>
+        <dt>SPEED</dt><dd data-field="velocity">—</dd>
+        <dt>QUATERNION</dt><dd data-field="orientation">—</dd>
+        <dt>DRAW CALLS</dt><dd data-field="drawcalls">—</dd>
+        <dt>RESOURCES</dt><dd data-field="resources">—</dd>
+        <dt>SHADER ERRORS</dt><dd data-field="errors">0</dd>
+      </dl>
+      <div class="pipeline" data-field="pipeline">—</div>
+      <details><summary>DEVICE & CONFIGURATION</summary><p data-field="gpu"></p><p data-field="visibility"></p><p data-field="geometry"></p><p data-field="model"></p><pre data-field="config"></pre></details>
+      <p class="debug-note">CPU = update + submit · CPU ≠ GPU time</p>
+    </aside>
+    <footer class="workstation" aria-label="观测者工作站">
+      <section class="station-panel observer-panel" aria-labelledby="observer-heading">
+        <h2 id="observer-heading"><span>01 / OBSERVER</span>观测位置</h2>
+        <dl class="observation"><dt>模型半径</dt><dd data-observation="range">—</dd><dt>盘面倾角</dt><dd data-observation="inclination">—</dd><dt>捕获锥角直径</dt><dd data-observation="diameter">—</dd><dt>垂直视场</dt><dd data-observation="lens">—</dd><dt>视线偏角 H / V</dt><dd data-console="bearing">—</dd></dl>
+        <div class="control-row"><button id="hold-position" type="button" aria-pressed="false">定点观测</button><button id="recenter" type="button">回正视线</button></div>
+        <label class="zoom-control" for="optical-zoom">光学倍率 <input id="optical-zoom" type="range" min="1" max="1.6" step="0.01" value="1"/><output data-console="zoom" for="optical-zoom">1.00×</output></label>
+      </section>
+      <section class="station-panel clock-panel" aria-labelledby="clock-heading">
+        <h2 id="clock-heading"><span>02 / TWO CLOCKS</span>时间的两种读法</h2>
+        <div class="clocks"><div><label>参考时间 <b>t</b></label><strong data-console="reference">000.00</strong><small>MODEL SECONDS</small></div><div><label>本地钟 <b>τ</b></label><strong data-console="proper">000.00</strong><small>MODEL SECONDS</small></div></div>
+        <dl class="clock-readings"><dt>累计时间差</dt><dd data-console="clock-difference">0.000 s</dd><dt>本地 / 参考速率</dt><dd data-console="clock-rate">—</dd></dl>
+        <p class="instrument-note" data-console="clock-mode">Schwarzschild 钟模型 · 预设航迹</p>
+        <p class="instrument-note" data-console="scales"></p>
+      </section>
+      <section class="station-panel signal-panel" aria-labelledby="signal-heading">
+        <h2 id="signal-heading"><span>03 / SIGNAL LINK</span>发出信号，等待回应</h2>
+        <div class="link-heading"><span data-console="beacon-visibility">B-01 / 参考信标</span><span data-console="beacon-range">—</span></div>
+        <div class="signal-command"><button id="transmit" type="button">发射探测脉冲</button><span data-console="sequence">PULSE —</span></div>
+        <progress id="signal-progress" max="1" value="0" aria-label="信号往返进度，模型预测"></progress>
+        <p class="signal-state" data-console="signal-state" role="status">链路待命</p>
+        <dl class="signal-readings"><dt>往返 t / τ</dt><dd data-console="rtt">— / —</dd><dt>去程引力延迟</dt><dd data-console="gravity-delay">—</dd><dt>入射频比 / 接收确认</dt><dd data-console="signal-frequency">—</dd></dl>
+        <pre class="event-log" data-console="event-log" aria-label="信号事件记录">尚无接收记录</pre>
+        <p class="instrument-note">主测地线传播 · 进度为预测，抵达后确认</p>
+      </section>
+    </footer>
+    <details id="model-note"><summary>模型说明</summary><div class="model-card"><h3>观测实验 / Prototype 0.5</h3><p>你位于一座沿预设航迹移动的观测平台。拖动或方向键调整视线，定点观测只停止平台运动，盘面、时钟与信号继续运行。</p><p>本地钟沿预设轨迹按 Schwarzschild 度规积分。u 与 s 为模型单位；轨迹不是自由落体，视觉阴影半径不代表事件视界半径。</p><p>信标 B-01 固定在模型空间。信号采用有限端点之间的 Schwarzschild 主测地线，回波求解移动接收者的相遇时刻。信标应答等待按其本地钟计算。只跟踪主路径，假设盘面对该通信波段透明；不模拟多路径、吸收或信号强度。远端日志在回波抵达后揭示。</p><p>背景与吸积盘沿同一 Schwarzschild 光路成像，盘面首个交点决定遮挡；捕获边界由临界冲量决定，已移除球体阴影与艺术亮边。最多检查三次盘面穿越，高阶盘像有限。S-01 近轴环像是参考星成像。盘面使用稳定圆轨道频移、观测者局部像差和发射时刻延迟；薄盘亮度纹理、温度标度与显示颜色为模型／艺术选择。航程为五分钟外部接近，结束后停驻，不穿越事件视界。切到后台会暂停实验；刷新页面重新开始，不保存个人数据。</p><div class="profile"><span class="eyebrow">MODEL EMISSION / RADIAL PROFILE</span><svg viewBox="0 0 240 48" role="img" aria-label="归一化盘面径向辐射模型，非观测数据"><path d="M0 6V43H240 M80 40V46 M160 40V46 M239 6V46"/><polyline id="emission-profile" points="0,42 240,42"/></svg><div><span>Rᵢₙ <b data-observation="inner">—</b></span><span>Rₒᵤₜ <b data-observation="outer">—</b></span></div></div><span class="optical-label" data-observation="rim">EDGE PROXY / ON</span><p>SCENE T + <span id="timecode">0000.0</span> s</p></div></details>

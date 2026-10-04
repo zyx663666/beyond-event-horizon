@@ -1,0 +1,25 @@
+{
+  "name": "black-hole-webgl-prototype",
+  "private": true,
+  "version": "0.7.0",
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "check:dist": "node scripts/check-dist.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "generate:lensing": "node scripts/generate-lensing.mjs",
+    "generate:orbits": "node scripts/generate-orbits.mjs"
+  },
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.1"
+  }
+}
+

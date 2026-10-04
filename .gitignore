@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.log
+artifacts/
+public/refinement-stills/
+public/experience-stills/
+*.zip
+.env.local
+.env.*.local

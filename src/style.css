@@ -1,0 +1,246 @@
+:root { color-scheme: dark; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #d9d9d4; background: #030509; font-synthesis: none; }
+* { box-sizing: border-box; }
+html, body, #app { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+#app { isolation: isolate; }
+#scene { display: block; width: 100%; height: 100%; position: absolute; inset: 0; z-index: 0; }
+.vignette { z-index: 1; }
+.masthead, .footer, .axis { z-index: 2; transform: translateZ(0); }
+#debug { z-index: 3; transform: translateZ(0); }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, transparent 28%, #0005 100%); }
+.masthead { position: absolute; top: 38px; left: 44px; right: 44px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; }
+.eyebrow { display: block; font-size: 9px; letter-spacing: .23em; color: #949994; }
+.eyebrow i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #d7a879; margin-right: 10px; box-shadow: 0 0 12px #c4946180; }
+h1 { margin: 17px 0 12px; font-size: clamp(22px, 2.55vw, 39px); letter-spacing: .075em; font-weight: 350; line-height: 1.1; }
+.period { color: #d9a97a; }
+.identity p { margin: 0; font-size: 10px; letter-spacing: .45em; color: #7b807d; }
+.edition { display: grid; text-align: right; gap: 7px; font-size: 9px; color: #8f9590; letter-spacing: .17em; }
+.edition strong { font-size: 35px; font-weight: 200; color: #ddd8cb; }
+.edition b { font-weight: 400; color: #d4ab80; margin-left: 12px; }
+.axis { position: absolute; top: 42%; height: 17%; display: flex; flex-direction: column; justify-content: space-between; color: #737872; font: 12px monospace; pointer-events: none; }
+.axis-left { left: 44px; } .axis-right { right: 44px; }
+.footer { position: absolute; bottom: 35px; left: 44px; right: 44px; display: flex; align-items: flex-end; justify-content: space-between; pointer-events: none; }
+h2 { font-size: 23px; line-height: 1.3; font-weight: 300; letter-spacing: .025em; margin: 13px 0 11px; }
+.caption p { margin: 0; font-size: 10px; letter-spacing: .19em; color: #8a8d87; }
+.runtime { text-align: right; }
+#status { display: block; font: 9px/1.7 monospace; letter-spacing: .12em; color: #adbb9e; max-width: 360px; }
+#status[data-error="true"] { color: #ff9b7e; background: #190b09dd; padding: 8px; }
+.time { font: 18px/1.6 Consolas, monospace; letter-spacing: .08em; margin: 8px 0; color: #c4c7bd; }
+.time small { font-size: 9px; color: #7e867d; }
+.runtime p { margin: 0; color: #727a76; font-size: 9px; line-height: 1.8; letter-spacing: .04em; }
+#debug { position: absolute; top: 174px; right: 44px; width: 280px; max-height: calc(100vh - 370px); overflow-y: auto; padding: 17px; background: #05090dc9; border: 1px solid #a9b6b31c; border-radius: 2px; font: 9px/1.7 Consolas, monospace; scrollbar-width: thin; }
+#debug[hidden] { display: none; }
+.debug-heading { letter-spacing: .14em; color: #a4afa5; display: flex; justify-content: space-between; }
+.debug-heading span { color: #ceaa80; }
+.metric { margin: 8px 0 10px; } .metric strong { font-size: 28px; font-weight: 400; color: #d4dbce; } .metric > span { margin-left: 9px; color: #717e73; }
+dl { display: grid; grid-template-columns: 96px 1fr; gap: 4px 6px; margin: 0; }
+dt { color: #6f7d75; } dd { margin: 0; color: #b7c3b8; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.pipeline { margin-top: 13px; padding-top: 10px; border-top: 1px solid #a9b6b31c; color: #c3a887; letter-spacing: .08em; }
+summary { cursor: pointer; margin-top: 10px; color: #87968b; }
+details p { overflow-wrap: anywhere; color: #929f94; } pre { white-space: pre-wrap; color: #8a9b90; font-size: 9px; }
+.debug-note { color: #69776e; font-size: 8px; margin-bottom: 0; }
+.observation { grid-template-columns: 116px 70px; font: 9px/1.7 Consolas, monospace; letter-spacing: .05em; }
+.observation dd { text-align: right; color: #ccc8b8; }
+.profile { width: 240px; margin: 0 24px 3px; }
+.profile .eyebrow { font-size: 8px; letter-spacing: .13em; }
+.profile svg { display: block; width: 100%; height: 48px; margin: 13px 0 7px; overflow: visible; }
+.profile path { fill: none; stroke: #84958c40; stroke-width: .7; }
+.profile polyline { fill: none; stroke: #c5a077; stroke-width: 1; }
+.profile > div { display: flex; justify-content: space-between; font: 9px Consolas, monospace; color: #738077; }
+.profile b { font-weight: 400; color: #b8b7a8; }
+.profile p { color: #68756d; font: 8px Consolas, monospace; margin: 10px 0 0; }
+.optical-label { display: block; color: #bca180; font: 8px/2 Consolas, monospace; letter-spacing: .15em; margin-bottom: 5px; }
+@media (max-width: 900px), (max-height: 600px) { .profile { display: none; } }
+@media (max-height: 500px) { .caption h2, .caption > .eyebrow, .runtime p, .identity p { display: none; } .footer { bottom: 18px; } .masthead { top: 18px; } }
+@media (max-width: 800px) { .masthead { top: 23px; left: 24px; right: 24px; } .footer { left: 24px; right: 24px; bottom: 24px; } #debug { right: 24px; top: 150px; width: 242px; max-height: calc(100vh - 330px); } .axis-left { left: 24px; } .axis-right { right: 24px; } .eyebrow { font-size: 8px; } h2 { font-size: 19px; } }
+@media (max-width: 550px) { .edition { font-size: 7px; } .edition strong { font-size: 23px; } .identity .eyebrow { max-width: 160px; line-height: 1.8; } h1 { font-size: 21px; } .runtime p { display: none; } .caption h2 { font-size: 16px; } .caption p { font-size: 8px; } #debug { top: 170px; max-height: 180px; width: 214px; padding: 10px; } .axis { display: none; } #status { max-width: 155px; font-size: 8px; } }
+
+/* Observer station: instruments live at the perimeter; the optical core stays unobstructed. */
+#scene { cursor: grab; touch-action: none; }
+#scene[data-dragging="true"] { cursor: grabbing; }
+#scene:focus-visible { outline: 1px solid #b8c7b555; outline-offset: -5px; }
+.identity #status { margin-top: 17px; font-size: 8px; }
+.edition [data-console="mode"] { margin-top: 13px; color: #bcb59f; font: 8px Consolas, monospace; letter-spacing: .06em; }
+.sight { position: absolute; pointer-events: none; top: 42%; left: 50%; width: 34px; height: 34px; transform: translate(-50%, -50%); z-index: 2; opacity: .38; }
+.sight i { position: absolute; width: 7px; height: 7px; border-color: #d8d9ca; border-style: solid; border-width: 0; }
+.sight i:nth-child(1) { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+.sight i:nth-child(2) { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+.sight i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+.sight i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+#beacon-marker { position: absolute; z-index: 2; pointer-events: none; color: #92b4ad; font: 9px Consolas, monospace; display: flex; align-items: center; gap: 10px; transform: translate(-5px, -5px); }
+#beacon-marker[hidden] { display: none; }
+#beacon-marker i { width: 7px; height: 7px; border: 1px solid #92b4ad; transform: rotate(45deg); }
+#beacon-marker small { display: block; font-size: 6px; letter-spacing: .12em; padding-top: 4px; }
+#view-help { position: absolute; left: 44px; bottom: 281px; margin: 0; pointer-events: none; z-index: 2; color: #7c8982; font: 9px/1.8 "Segoe UI", sans-serif; letter-spacing: .07em; }
+.workstation { position: absolute; z-index: 2; left: 44px; right: 44px; bottom: 27px; display: grid; grid-template-columns: 1fr 1.05fr 1.1fr; gap: clamp(18px, 4vw, 70px); transform: translateZ(0); }
+.station-panel { min-width: 0; border-top: 1px solid #87968a40; padding-top: 13px; background: linear-gradient(180deg, #03060750, #030607c9); }
+.station-panel h2 { font-size: 12px; font-weight: 400; letter-spacing: .1em; margin: 0 0 17px; color: #c3c5b9; }
+.station-panel h2 span { display: block; font: 8px/1.5 Consolas, monospace; letter-spacing: .16em; color: #b59b7b; margin-bottom: 6px; }
+.station-panel dl { font: 9px/1.65 Consolas, "Microsoft YaHei", monospace; }
+.observation { grid-template-columns: 1fr auto; gap: 2px 8px; }
+.station-panel dd { text-align: right; }
+.control-row { display: flex; gap: 8px; margin-top: 12px; }
+button { appearance: none; border: 1px solid #9aaa944d; background: #1b272049; color: #d0d3c5; padding: 8px 12px; font: 10px "Segoe UI", "Microsoft YaHei", sans-serif; letter-spacing: .06em; border-radius: 2px; cursor: pointer; }
+button:hover { border-color: #c8ba8e; background: #3d392955; }
+button[aria-pressed="true"] { color: #e0bc8b; border-color: #b6966c99; }
+button:disabled { cursor: default; opacity: .4; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid #d4b685; outline-offset: 3px; }
+.zoom-control { display: flex; align-items: center; gap: 10px; font-size: 9px; color: #7c8b80; margin-top: 12px; white-space: nowrap; }
+.zoom-control input { min-width: 40px; flex: 1; width: 60px; height: 12px; accent-color: #b49c7e; cursor: pointer; }
+.zoom-control output { min-width: 38px; text-align: right; font: 10px Consolas, monospace; color: #c9beaa; }
+.clocks { display: flex; gap: 18px; margin: 4px 0 19px; }
+.clocks > div { flex: 1; min-width: 0; }
+.clocks label { display: flex; justify-content: space-between; color: #89998e; font-size: 9px; }
+.clocks b { color: #d8b78e; font: italic 12px Georgia, serif; }
+.clocks strong { display: block; color: #e3dfce; font: 28px/1.65 Consolas, monospace; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.clocks > div:last-child strong { color: #cfb188; }
+.clocks small { color: #697b70; font: 7px Consolas, monospace; letter-spacing: .08em; }
+.clock-readings { grid-template-columns: 1fr auto; }
+.instrument-note { font-size: 8px; color: #79877d; line-height: 1.8; margin: 8px 0 0; }
+.link-heading { display: flex; justify-content: space-between; font: 9px Consolas, monospace; color: #88a99f; }
+.signal-command { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; }
+.signal-command > span { font: 8px Consolas, monospace; color: #8d9787; }
+#transmit { border-color: #b8986a80; color: #e6c89f; }
+#signal-progress { display: block; width: 100%; height: 3px; margin-top: 12px; border: none; background: #24312a; accent-color: #bdad8a; }
+#signal-progress::-webkit-progress-bar { background: #24312a; }
+#signal-progress::-webkit-progress-value { background: #bdad8a; }
+.signal-state { font: 9px/1.5 "Segoe UI", sans-serif; color: #b7bfae; margin: 8px 0; }
+.signal-readings { grid-template-columns: auto 1fr; }
+.event-log { min-height: 35px; height: 35px; overflow-y: auto; white-space: pre-wrap; font: 8px/1.45 Consolas, monospace; color: #80978a; margin: 7px 0 0; scrollbar-width: thin; }
+#model-note { position: absolute; z-index: 4; right: 44px; top: 168px; font-size: 9px; }
+#model-note > summary { text-align: right; margin-top: 0; color: #9caa9d; }
+.model-card { position: absolute; top: 24px; right: 0; width: 340px; max-height: calc(100vh - 230px); overflow-y: auto; padding: 20px; border: 1px solid #86978255; background: #070d11f7; line-height: 1.9; color: #a3afa2; }
+.model-card h3 { color: #dac6a6; margin-top: 0; font-size: 12px; font-weight: 400; }
+.model-card .profile { display: block; width: 100%; margin: 20px 0; }
+#debug { z-index: 5; }
+@media (max-width: 1050px) { .workstation { gap: 22px; left: 32px; right: 32px; } .clocks { gap: 12px; } .clocks strong { font-size: 23px; } #view-help { left: 32px; } }
+@media (max-width: 700px) {
+  .workstation { left: 20px; right: 20px; bottom: 18px; grid-template-columns: 1fr 1fr; gap: 16px; max-height: 260px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px; }
+  .clock-panel { grid-column: 1 / -1; grid-row: 2; }
+  .clocks { margin-bottom: 10px; } .clocks strong { font-size: 25px; }
+  .clock-panel .clock-readings { max-width: 220px; }
+  .station-panel h2 { font-size: 10px; margin-bottom: 12px; }
+  .station-panel h2 span { font-size: 7px; }
+  .control-row { gap: 5px; } button { padding: 8px 6px; font-size: 9px; }
+  .station-panel dl, .link-heading { font-size: 8px; }
+  .signal-command > span { display: none; }
+  .observation { grid-template-columns: 1fr auto; }
+  .clocks { gap: 40px; }
+  #view-help { left: 20px; bottom: 290px; font-size: 8px; }
+  .edition [data-console="mode"] { max-width: 135px; font-size: 7px; }
+  #model-note { top: 160px; right: 24px; }
+  .model-card { width: min(340px, calc(100vw - 48px)); }
+  #beacon-marker small { display: none; }
+}
+@media (max-height: 650px) {
+  .workstation { max-height: 155px; overflow-y: auto; overscroll-behavior: contain; }
+  #view-help { bottom: 195px; }
+  .identity h1 { font-size: 22px; margin: 10px 0; }
+  .identity p, .identity #status { display: none; }
+  #model-note { top: 120px; }
+}
+@media (max-width: 700px) and (min-height: 651px) {
+  .workstation { max-height: 294px; gap: 14px 16px; }
+  .clock-panel { grid-column: 1 / -1; grid-row: 1; padding-top: 7px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+  .clock-panel h2 { grid-column: 1 / -1; font-size: 0; margin-bottom: 4px; }
+  .clock-panel h2 span { margin-bottom: 0; }
+  .clocks { grid-column: 1; grid-row: 2; margin: 0; gap: 18px; }
+  .clocks label { font-size: 8px; }
+  .clocks strong { font-size: 18px; line-height: 1.5; }
+  .clocks small, .clock-panel .instrument-note { display: none; }
+  .clock-readings { grid-column: 2; grid-row: 2; align-content: center; gap: 4px; }
+  .observer-panel, .signal-panel { grid-row: 2; }
+  .observer-panel .observation dt:nth-of-type(2), .observer-panel .observation dd:nth-of-type(2), .observer-panel .observation dt:nth-of-type(3), .observer-panel .observation dd:nth-of-type(3), .observer-panel .observation dt:nth-of-type(5), .observer-panel .observation dd:nth-of-type(5) { display: none; }
+  .event-log { display: none; }
+  .signal-panel .instrument-note { font-size: 7px; }
+  #view-help { bottom: 322px; }
+}
+.lens-instrument{position:absolute;top:max(200px,25%);left:3.4%;width:280px;color:#9bb4be;font:10px/1.6 monospace;z-index:4;padding:12px 16px;background:linear-gradient(110deg,rgba(5,14,22,.8),rgba(5,14,22,.25));border-top:1px solid #42606a}
+.lens-instrument h2{font-size:10px;font-weight:400;letter-spacing:2px;margin:0 0 7px;color:#c2e1e9}.lens-instrument h2 span{float:right;letter-spacing:1px}.lens-instrument p{margin:5px 0}.lens-instrument small{font-size:9px;color:#71858f}.lens-instrument .control-row{margin:0 0 7px}.journey-heading{display:flex;justify-content:space-between;margin-top:9px}#journey-progress{width:100%;height:2px;accent-color:#85c7d8}.reference-marker{position:absolute;z-index:3;pointer-events:none;color:#a1e9ff;font:9px monospace;letter-spacing:1px;padding:7px;border-left:1px solid #8acada;transform:translate(8px,-50%);text-shadow:0 1px 4px #000}.reference-marker[hidden]{display:none}
+
+#view-help{bottom:315px}
+
+.lens-instrument .control-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.lens-instrument button{font-size:9px;padding:5px 3px;min-width:0}
+
+.station-panel{background:linear-gradient(180deg,#030607c7,#030607ee)}.lens-instrument{background:linear-gradient(110deg,rgba(5,14,22,.86),rgba(5,14,22,.68))}#view-help{padding:2px 6px;background:#030607a8}
+
+/* A fixed 16:9 photographic aperture. No change to optical quality or physical tables. */
+#film-switch { position:absolute;z-index:6;right:44px;top:143px;color:#aeb9b4;text-decoration:none;font:9px/1.5 'Segoe UI',sans-serif;letter-spacing:.12em;padding:6px 0;border-bottom:1px solid #8ca19d55; }
+#film-switch:focus-visible { outline:2px solid #d4b685;outline-offset:5px; }
+.film-mode { background:#000; }
+.film-mode #app { position:absolute;width:min(100vw,177.777778vh);height:min(100vh,56.25vw);left:50%;top:50%;transform:translate(-50%,-50%); }
+.film-mode .masthead,.film-mode .axis,.film-mode .sight,.film-mode #beacon-marker,.film-mode #view-help,.film-mode .workstation,.film-mode .lens-instrument,.film-mode .reference-marker,.film-mode #model-note { display:none!important; }
+.film-mode .masthead:has(#status[data-error="true"]) { display:block!important;z-index:10; }
+.film-mode .masthead:has(#status[data-error="true"]) h1,.film-mode .masthead:has(#status[data-error="true"]) .edition { display:none; }
+.film-mode #film-switch { top:5.5%;right:4.5%;opacity:.55;font-size:9px; }
+.film-mode #film-switch:hover,.film-mode #film-switch:focus { opacity:1; }
+#cinematic { position:absolute;inset:0;z-index:2;pointer-events:none;color:#d7dfdc;text-shadow:0 2px 12px #000; }
+.film-chapter { position:absolute;left:4.5%;top:6.5%;font:10px/1.6 'Segoe UI','Microsoft YaHei',sans-serif;letter-spacing:.2em;color:#94aaa9; }
+.film-caption { position:absolute;left:7%;right:7%;bottom:13%;text-align:center;opacity:0; }
+.film-en { font-size:clamp(18px,1.75vw,31px);font-weight:300;letter-spacing:.035em;line-height:1.45; }
+.film-zh { margin-top:13px;font-size:clamp(11px,.85vw,16px);letter-spacing:.22em;color:#a6b4b2; }
+.film-title .film-en { font-size:clamp(24px,2.8vw,48px);letter-spacing:.18em; }
+.film-title .film-zh { letter-spacing:.55em; }
+.film-telemetry,.film-signal { position:absolute;bottom:5.5%;font:10px/1.6 Consolas,'Microsoft YaHei',monospace;color:#829996;letter-spacing:.08em; }
+.film-telemetry { left:4.5%;white-space:pre; }
+.film-signal { right:4.5%; }
+.film-signal::before { content:'';display:inline-block;width:4px;height:4px;background:#92b3a9;border-radius:50%;margin-right:10px; }
+.film-signal[data-active="true"]::before { background:#d3af7d;box-shadow:0 0 9px #d3af7d77; }
+.film-progress { position:absolute;bottom:3.4%;left:4.5%;width:91%;height:1px;background:linear-gradient(90deg,#55777566,#c6ae83);transform-origin:left; }
+.film-mode:not(.film-ready) .masthead { display:block!important; }
+.film-mode:not(.film-ready) .identity > :not(#status),.film-mode:not(.film-ready) .edition { display:none; }
+.film-mode .identity #status[data-error="true"],.film-mode:not(.film-ready) .identity #status { display:block; }
+
+/* Complete five-minute free-fall film. Controls reveal on pointer or keyboard focus. */
+.film-boundary{position:absolute;right:4.5%;top:6.5%;font:9px/1.6 'Segoe UI','Microsoft YaHei',sans-serif;letter-spacing:.14em;color:#728b90}
+.film-boundary[data-art="true"]{color:#bfa784}
+.film-controls{position:absolute;z-index:8;bottom:0;left:0;right:0;min-height:34px;display:flex;align-items:center;gap:12px;padding:9px 4.5%;background:linear-gradient(transparent,#020607e8);opacity:0;transition:opacity .3s;color:#8fa6a5;font:10px 'Segoe UI',sans-serif}
+.film-controls:hover,.film-controls:focus-within{opacity:1}
+.film-controls button{padding:5px 8px;font-size:9px;background:#0a151a80}
+.film-controls label{display:flex;align-items:center;gap:10px;flex:1}
+.film-controls input{width:100%;accent-color:#92babd;height:3px}
+.film-controls a{color:#a8bfbd;text-decoration:none;font-size:10px}
+.film-controls output{min-width:87px;font:10px Consolas,monospace}
+.film-about summary{margin:0;font-size:10px;color:#9dafac}
+.film-about>div{position:absolute;bottom:45px;right:4.5%;width:430px;padding:19px 23px;background:#050e16f5;border:1px solid #44606580;line-height:1.9;font-size:11px;color:#becac6}
+.film-cone{position:absolute;bottom:22%;left:4.5%;width:150px;opacity:0;transition:opacity 1s;color:#829d9d}
+.film-cone svg{width:100%;overflow:visible}.film-cone text{fill:#708e91;font:10px monospace}.film-cone circle{fill:#c3d5cb}
+.cone-fill{fill:#80bacb0e}.cone-axis{stroke:#759da547;stroke-width:1;fill:none}.cone-rays{stroke:#afd1d0;stroke-width:1;fill:none}
+.film-cone span{font:7px 'Segoe UI','Microsoft YaHei',sans-serif;letter-spacing:.06em;white-space:nowrap}
+.film-mode #scene{cursor:default}
+.film-mode #debug{display:none!important}
+.film-link-reading{position:absolute;left:4.5%;top:11%;font:9px/1.8 Consolas,'Microsoft YaHei',monospace;letter-spacing:.06em;color:#9cafaa}
+.film-cone{left:auto;right:4.5%;top:15%;bottom:auto;width:150px}
+#cinematic::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#000b,transparent 22%)}
+/* 0.7: three languages of information — instrument, science, reflection. */
+.reconstruction .film-caption{bottom:18%;left:11%;right:11%}
+.reconstruction .film-en{font-family:Georgia,'Times New Roman',serif;font-size:clamp(22px,2.1vw,36px);letter-spacing:.015em;font-weight:400}
+.reconstruction .film-title{bottom:24%;left:6%;right:6%}
+.reconstruction .film-title .film-en{font:300 clamp(25px,3.2vw,52px)/1.25 'Segoe UI',sans-serif;letter-spacing:.17em}
+.reconstruction .film-zh{font-size:clamp(11px,.9vw,16px);margin-top:12px;letter-spacing:.14em}
+.mission-id{position:absolute;left:4.5%;top:11%;font:9px Consolas,'Microsoft YaHei',monospace;letter-spacing:.12em;color:#8ba7ad}
+.mission-id small{display:block;margin-top:7px;font-size:7px;color:#66818b;letter-spacing:.13em}
+.reconstruction .film-link-reading{top:auto;bottom:16%;font-size:9px}
+.reconstruction .film-signal{bottom:6.5%;font-size:9px}
+.instrument-rail{position:absolute;left:4.5%;bottom:6%;display:flex;gap:clamp(20px,3vw,55px);max-width:65%}
+.instrument label{display:block;font:8px/1.7 Consolas,'Microsoft YaHei',monospace;letter-spacing:.09em;color:#7396a0}
+.instrument strong{display:block;margin-top:5px;font:16px/1.5 Consolas,'Microsoft YaHei',monospace;font-weight:400;color:#c2d3d3;letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.science-card{position:absolute;top:24%;left:5%;width:29%;max-width:450px;padding:20px 22px;background:linear-gradient(110deg,#071218ee,#071218bd);border-left:1px solid #8ec6ce;border-top:1px solid #577d8266;overflow:hidden;opacity:0;box-shadow:0 10px 35px #0003}
+.science-label{font:8px Consolas,'Microsoft YaHei',monospace;letter-spacing:.17em;color:#d4ac79;margin-bottom:16px}
+.science-card h2{font:12px/1.8 'Segoe UI','Microsoft YaHei',sans-serif;letter-spacing:.055em;color:#b6d9df;margin:0 0 12px}
+.science-en{font:15px/1.6 'Segoe UI',sans-serif;font-weight:300;margin:0 0 9px;color:#e1e6df}
+.science-zh{font:11px/1.8 'Microsoft YaHei',sans-serif;color:#9badb0;margin:0}
+.science-diagram{margin-top:17px;padding-top:10px;border-top:1px solid #9cb5ac26}
+.science-diagram svg{display:block;width:100%;overflow:visible;fill:#abc5bf}
+.science-diagram text,.film-cone text{font:8px Consolas,monospace;fill:#89a6ad}
+.science-diagram .diagram-number{font-size:19px;fill:#d4c8a8}
+.diagram-axis{stroke:#72909655;fill:none;stroke-width:1}.diagram-ray{stroke:#9ac9d0;fill:none;stroke-width:1}.diagram-cone{stroke:#9ac9d0;fill:#74adc414;stroke-width:1}.diagram-mass{fill:#020508;stroke:#af8a61;stroke-width:1}
+.science-scan{position:absolute;left:0;right:0;height:1px;background:#86d6df25;box-shadow:0 0 8px #a4eaff19}
+.reconstruction .film-cone{top:19%;width:210px}
+.cut-transition{position:absolute;inset:0;background:#020408;opacity:0;z-index:12}
+.archive-cut{position:absolute;left:0;right:0;top:49%;text-align:center;font:10px Consolas,'Microsoft YaHei',monospace;letter-spacing:.25em;color:#b3c6c5;z-index:13;opacity:0}
+.boot-sequence{position:absolute;left:5%;top:21%;font:10px/2 Consolas,'Microsoft YaHei',monospace;letter-spacing:.2em;color:#9bc2cc}
+.reconstruction::before{background:linear-gradient(0deg,#000d,transparent 32%,transparent 80%,#0007)}
+.reconstruction .film-cone{transition:none}
+.archive-source{position:absolute;right:4.5%;bottom:15%;text-align:right;white-space:pre-line;font:8px/1.9 Consolas,'Microsoft YaHei',monospace;letter-spacing:.08em;color:#b1b5a6}
+.film-controls label{white-space:nowrap;min-width:0}
+.film-controls input{flex:1;min-width:40px;width:auto}
