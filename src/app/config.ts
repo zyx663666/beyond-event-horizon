@@ -39,7 +39,8 @@ export function createConfig(search = ''): VisualConfig {
   const qualityName = requested as QualityName;
   const time = params.get('t');
   const config: VisualConfig = {
-    qualityName, quality: { ...QUALITY_PROFILES[qualityName] },
+    // ?smaa=1 keeps anti-aliasing on when a low preset is used for a slow-GPU render.
+    qualityName, quality: { ...QUALITY_PROFILES[qualityName], ...(params.get('smaa') === '1' ? { smaa: true } : {}) },
     blackHole: { radius: 1.24 },
     disk: { innerRadius: 1.48, outerRadius: 4.8, intensity: 2.8, temperature: 6500, rotationSpeed: 0.3, tilt: -0.08, hotColor: '#ffecd0', coolColor: '#bf4424', thickness: 0.055, beta: 0.24, turbulence: 0.85 },
     optics: { enabled: params.get('rim') !== '0', intensity: 1.65, width: 0.013, halo: 0.13, color: '#ffc98d' },

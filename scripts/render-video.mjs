@@ -125,7 +125,8 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 page.on('pageerror', error => console.log(`[pageerror] ${error.message}`));
-await page.goto(`http://127.0.0.1:${port}/?mode=film&quality=${quality}&debug=0`, { waitUntil: 'load', timeout: 120000 });
+const extraQuery = flag('query', '');
+await page.goto(`http://127.0.0.1:${port}/?mode=film&quality=${quality}&debug=0${extraQuery ? `&${extraQuery}` : ''}`, { waitUntil: 'load', timeout: 120000 });
 await page.waitForSelector('body.film-ready', { timeout: 300000 });
 const gpu = await page.$eval('#cinematic', el => el.dataset.gpu);
 const shaderErrors = await page.$eval('#cinematic', el => el.dataset.shaderErrors);
@@ -258,7 +259,8 @@ const seekFrame = t => page.evaluate(time => window.dispatchEvent(
 const settled = () => page.evaluate(() => new Promise(requestAnimationFrame));
 await seekFrame(t0);
 await settled();
-const screenshot = has('jpeg') ? { type: 'jpeg', quality: 95, captureBeyondViewport: false }
+const jpegQuality = Math.min(100, Math.max(50, Number(flag('jpeg-quality', 92))));
+const screenshot = has('jpeg') ? { type: 'jpeg', quality: jpegQuality, captureBeyondViewport: false }
                                : { type: 'png', captureBeyondViewport: true, optimizeForSpeed: true };
 console.log(`frame mode: ${totalFrames} frames · ${width}×${height} @ ${fps} fps · t ${t0}s → ${t1}s · ${has('jpeg') ? 'jpeg95' : 'png'}`);
 const { ffmpeg, done: ffmpegDone, writeFrame } = startFfmpeg(
