@@ -6,8 +6,8 @@
 export const credits = {
   title: { en: 'BEYOND EVENT HORIZON', zh: '事件视界之外' },
   author: '张宇祥',
-  team: '待定',
-  school: '河南工学院 · 计算机科学与技术学院',
+  school: '河南工学院',
+  department: '计算机科学与技术学院',
   year: '2026',
   finalQuote: { en: 'Team Lead: ZHANG Yuxiang', zh: '队长：张宇祥' },
   roles: [

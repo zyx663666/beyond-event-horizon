@@ -108,10 +108,10 @@
 .author-name > small { font:.64cqw Consolas,'Microsoft YaHei',monospace; letter-spacing:.12em; color:#93aaba; }
 .author-name h2 { font-size:1.8cqw; margin:.65cqw 0 1.25cqw; }
 .credit-roles { width:33cqw; display:grid; gap:.72cqw; margin:0 auto; }
-.credit-roles > div { display:flex; text-align:left; justify-content:space-between; align-items:center; }
+.credit-roles > div { display:flex; text-align:left; justify-content:space-between; align-items:flex-start; }
 .credit-roles span { font-size:.75cqw; line-height:1.5; color:#c1ced5; }
 .credit-roles small { display:block; font-size:.63cqw; color:#91a5b1; }
-.credit-roles b { font-size:.78cqw; font-weight:400; color:#d8dcd9; }
+.credit-roles b { font-size:.78cqw; font-weight:400; color:#d8dcd9; line-height:1.5; }
 .credit-affiliations { display:flex; gap:2.5cqw; margin-top:1.7cqw; font-size:.7cqw; color:#bdcbd3; }
 .credit-affiliations small { display:block; font:.53cqw/2 Consolas,monospace; color:#8fa3b0; }
 .credits-sources { font:.53cqw/1.9 Consolas,monospace; color:#8395a1; margin-top:1.5cqw; }

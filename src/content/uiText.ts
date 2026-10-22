@@ -43,7 +43,7 @@ const copy = {
   scope: 'MODEL / SOURCES / 模型与来源',
   recordComplete: 'RECORD COMPLETE', recordCompleteZh: '记录完成',
   archiveClosed: 'ARCHIVE CLOSED', archiveClosedZh: '档案关闭',
-  createdBy: 'CREATED BY / 创作', team: 'TEAM / 团队', school: '学校与院系 / SCHOOL · DEPARTMENT', year: 'YEAR / 年份',
+  createdBy: 'CREATED BY / 创作', school: '学校 / SCHOOL', department: '院系 / DEPARTMENT', year: '制作年份 / YEAR',
   sources: '地表纹理：NASA · GSFC SVS · Blue Marble · Reto Stöckli / EARTH TEXTURE',
   creditsModel: '史瓦西光路 · 程序化宇宙 · 艺术尾声 / SCHWARZSCHILD OPTICS · PROCEDURAL COSMOS · ARTISTIC EPILOGUE',
   scienceBoundary: 'BH–A17 是距起点约 1200 光年的虚构目标。前半程剪辑约 6000 年的任务档案，尺度和周期经过压缩，不表示超光速航行。地球、主航程和观测对象为实时三维场景；地表使用 NASA / GSFC SVS Blue Marble 纹理（Reto Stöckli）。黑洞来光使用 Schwarzschild 模型；恒星撕裂、气体捕获与残骸衰减为动力学示意，残骸衰减假设耗散，不是完整流体模拟。右侧光路和光锥图为仪器示意，不能当作天体实体表面。r − Rs 是面积半径的坐标差，不是局部测得的固有距离。外发频比是相对静止中继 B–01（r=36 Rs）的模型预测；视界内不存在向该中继逃逸的外发光路，但跨越前发出的入射回声仍可抵达。远端读数来自已收到的旧回声，绝非远端此刻。科学注释采用平滑时率重映射，绝不冻结物理钟；航程 5:30（含片头 6:06）在 r=0.25 Rs 主动停止模型演示，航程 5:34（含片头 6:10）起为艺术演绎，并非奇点内部预测。含片头 7:06 起进入独立片尾。音乐为可替换的独立链路；航行档位调节影片时钟，不改变模型内物理速度。',
