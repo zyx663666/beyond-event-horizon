@@ -72,12 +72,10 @@ export class ObservatoryApp {
  };
  private async startExport(){
   const btn=this.root.querySelector<HTMLElement>('#export-video');if(!btn||btn.dataset.state==='busy')return;
-  // The render endpoint only exists in the local dev server. Static hosting
-  // answers POST with 404/405, so don't send the request at all off localhost.
-  if(!['127.0.0.1','localhost','[::1]'].includes(location.hostname)){this.status(ui.exportOfflineZh,true);return;}
   try{
    const res=await fetch('/api/render',{method:'POST'});
-   if(!res.ok&&res.status!==409){this.status(ui.exportOfflineZh,true);return;}
+   if(res.status===404){this.status(ui.exportOfflineZh,true);return;}
+   if(!res.ok&&res.status!==409){this.status(`Export endpoint error ${res.status}`,true);return;}
    this.setExport(ui.exportingZh,ui.exporting,'busy');
    this.exportTimer=window.setTimeout(this.pollExport,1500);
   }catch{this.status(ui.exportOfflineZh,true);}
