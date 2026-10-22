@@ -178,15 +178,14 @@ if (mode === 'realtime') {
 
   const cdp = await page.createCDPSession();
   let n = 0, firstTs = null, lastRel = 0;
-  let list = '';
+  const stamps = [];
   let writes = Promise.resolve();
   cdp.on('Page.screencastFrame', ev => {
     const ts = typeof ev.metadata?.timestamp === 'number' ? ev.metadata.timestamp : performance.now() / 1000;
     if (firstTs === null) firstTs = ts;
     const rel = ts - firstTs;
     const name = `f${String(n).padStart(6, '0')}.jpg`;
-    if (n > 0) list += `duration ${Math.max(0.001, rel - lastRel).toFixed(4)}\n`;
-    list += `file '${name}'\n`;
+    stamps.push(rel);
     lastRel = rel; n++;
     const data = Buffer.from(ev.data, 'base64');
     writes = writes.then(() => fs.writeFile(path.join(captureDir, name), data)).catch(() => {});
@@ -216,13 +215,26 @@ if (mode === 'realtime') {
   await cdp.send('Page.stopScreencast').catch(() => {});
   await writes;
   if (n < 10) throw new Error(`only ${n} frames captured — screencast failed`);
-  // concat spec: every entry needs a duration; repeat the last file line.
   const tail = Math.max(0.033, (performance.now() / 1000 - firstTs) - lastRel);
-  list += `duration ${tail.toFixed(4)}\nfile 'f${String(n - 1).padStart(6, '0')}.jpg'\n`;
-  await fs.writeFile(path.join(captureDir, 'list.txt'), list);
   const videoLength = lastRel + tail;
-  console.log(`captured ${n} frames · ${(n / videoLength).toFixed(1)} fps avg · ${videoLength.toFixed(1)}s — encoding MP4…`);
-  const { done } = startFfmpeg(['-f', 'concat', '-safe', '0', '-i', path.join(captureDir, 'list.txt')], videoLength);
+  const outFps = 30;
+  const totalOut = Math.max(2, Math.round(videoLength * outFps));
+  console.log(`captured ${n} frames · ${(n / videoLength).toFixed(1)} fps avg · ${videoLength.toFixed(1)}s — encoding MP4 @ ${outFps} fps…`);
+  // A concat list lets ffmpeg guess 25 fps and silently drop ~15% of the
+  // capture, so resample the timeline ourselves onto a fixed grid and feed
+  // the pipe: every moment of the film survives, with constant frame timing.
+  const { ffmpeg, done, writeFrame } = startFfmpeg(['-f', 'image2pipe', '-framerate', String(outFps), '-i', '-'], videoLength);
+  const frameFile = i => path.join(captureDir, `f${String(i).padStart(6, '0')}.jpg`);
+  let pick = 0, fed = 0;
+  for (let k = 0; k < totalOut; k++) {
+    const t = k / outFps;
+    while (pick + 1 < n && Math.abs(stamps[pick + 1] - t) <= Math.abs(stamps[pick] - t)) pick++;
+    await writeFrame(await fs.readFile(frameFile(pick)));
+    fed++;
+    if (fed % 3000 === 0) console.log(`encoding ${fed}/${totalOut} frames`);
+  }
+  console.log(`fed ${fed} frames (from ${n} captures) — finalising…`);
+  ffmpeg.stdin.end();
   await done;
   if (!keepFrames && !(await clearDir(captureDir, fs))) console.log(`note: temp frames left in ${captureDir}`);
   else if (keepFrames) console.log(`frames kept in ${captureDir}`);
