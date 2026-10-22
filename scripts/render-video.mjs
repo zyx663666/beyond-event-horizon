@@ -47,7 +47,17 @@ const keepFrames = has('keep-frames');
 const out = path.resolve(flag('out', path.join(root, 'render-output', `beyond-event-horizon-${quality}${mode === 'frame' ? `-${fps}fps` : ''}.mp4`)));
 const VIEWPORTS = { preview: [1280, 720], target: [2560, 1440], ultra: [3840, 2160] };
 if (!VIEWPORTS[quality]) throw new Error(`Unknown --quality ${quality}; use preview|target|ultra`);
-const [width, height] = VIEWPORTS[quality];
+// --size WxH decouples the captured frame size from the scene quality preset,
+// so a slower GPU can still capture smooth 30 fps at a smaller resolution.
+const sizeOverride = flag('size', '');
+let width, height;
+if (sizeOverride) {
+  const m = /^(\d{3,4})x(\d{3,4})$/.exec(sizeOverride);
+  if (!m) throw new Error('--size must look like 1920x1080');
+  width = Number(m[1]); height = Number(m[2]);
+} else {
+  [width, height] = VIEWPORTS[quality];
+}
 
 // Film length comes from the single source of truth in presentation.ts.
 const presentation = readFileSync(path.join(root, 'src/experience/presentation.ts'), 'utf8');
