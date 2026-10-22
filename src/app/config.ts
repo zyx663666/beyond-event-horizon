@@ -45,7 +45,7 @@ export function createConfig(search = ''): VisualConfig {
     optics: { enabled: params.get('rim') !== '0', intensity: 1.65, width: 0.013, halo: 0.13, color: '#ffc98d' },
     stars: { seed: 760, radius: 100, brightness: 1.1, galaxyIntensity: 0.045 },
     camera: { fov: 46, distance: 14.4, approach: 2.3, elevation: 0.24, period: 180, elevationRange: 0.18, lensTightening: 4 },
-    output: { exposure: 1.0, bloomStrength: 0.07, bloomRadius: 0.32, bloomThreshold: 1.15 },
+    output: { exposure: 1.0, bloomStrength: 0.11, bloomRadius: 0.45, bloomThreshold: 1.05 },
     observation: { schwarzschildRadius: 1.24 / (1.5 * Math.sqrt(3)), signalSpeed: 4, relayDelay: 0.4, beacon: [5.5, 2.2, 0], maxZoom: 1.6 },
     lensing: { enabled: params.get('lensing') !== '0', cubeSize: qualityName === 'preview' ? 512 : 2048, frequency: params.get('frequency') !== '0', orders: params.get('orders') === '1' },
     journey: { enabled: params.get('journey') !== 'orbit', duration: 300, farRadius: 32, nearRadius: 7.2 },

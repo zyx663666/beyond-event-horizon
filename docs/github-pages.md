@@ -4,13 +4,13 @@ The repository is a static Vite + TypeScript + Three.js/WebGL2 application. GitH
 
 ## Repository and automatic deployment
 
-1. Create a public repository named `beyond-event-horizon`, without initializing conflicting starter files.
+1. Create a public repository named `beh`, without initializing conflicting starter files. (The project was previously named `beyond-event-horizon`; GitHub keeps redirects for the old name after a rename.)
 2. Push this project root to its `main` branch.
 3. Open Settings → Pages → Build and deployment → Source, and select **GitHub Actions**.
 4. A main-branch push runs `.github/workflows/deploy-pages.yml`. If the first push preceded enabling Pages, use Actions → Deploy Beyond Event Horizon → Run workflow.
 5. A successful deployment appears in the github-pages environment. The URL format is `https://USERNAME.github.io/REPOSITORY/`.
 
-This project's repository is `https://github.com/zyx663666/beyond-event-horizon`. The published HTTPS site is `https://tianshanyun.cloud/beyond-event-horizon/`. The standard address `https://zyx663666.github.io/beyond-event-horizon/` redirects to that existing account-level domain. No DNS or domain setting was changed for this project.
+This project's repository is `https://github.com/zyx663666/beh`. The published HTTPS site is `https://tianshanyun.cloud/beh/`. The standard address `https://zyx663666.github.io/beh/` redirects to that existing account-level domain. No DNS or domain setting was changed for this project.
 
 Initial deployment succeeded on 2026-10-04: [build and deploy run](https://github.com/zyx663666/beyond-event-horizon/actions/runs/37170044522). The published home page and every manifest asset returned HTTP 200; online Observatory and Free Observation were opened in Edge, with no console errors observed.
 
@@ -34,7 +34,7 @@ Film queries remain usable: `quality=preview|target|ultra`, `debug=0|1`, paused 
 
 ```powershell
 npm ci
-$env:VITE_BASE_PATH='/beyond-event-horizon/'
+$env:VITE_BASE_PATH='/beh/'
 npm run build
 npm run check:dist
 npm run preview -- --port 5177 --strictPort

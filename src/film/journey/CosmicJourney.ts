@@ -110,7 +110,7 @@ export class CosmicJourney {
     this.filamentDetail=new ParticleVolume(filaments);this.volumes.push(this.filamentDetail);this.pulsar.add(this.filamentDetail.object);
     this.update(0);
   }
-  async prepare() { if (this.earthTexture) return; const tex = await new TextureLoader().loadAsync(`${import.meta.env.BASE_URL}cosmos/earth-blue-marble.png`); if (this.disposed) { tex.dispose(); return; } tex.colorSpace = SRGBColorSpace; tex.anisotropy = 4; this.earthTexture = tex; this.earth.uniforms.uMap.value = tex; }
+  async prepare() { if (this.earthTexture) return; const tex = await new TextureLoader().loadAsync(`${import.meta.env.BASE_URL}cosmos/earth-blue-marble.png`); if (this.disposed) { tex.dispose(); return; } tex.colorSpace = SRGBColorSpace; tex.anisotropy = 8; this.earthTexture = tex; this.earth.uniforms.uMap.value = tex; }
   update(t: number) {
     if(this.opening){this.object.children.forEach(o=>o.visible=true);this.opening=false;}
     this.earth.uniforms.uReveal.value=1;this.clouds.uniforms.uOpacity.value=1;this.airRim.material.uniforms.uReveal.value=1;this.airHaze.material.uniforms.uReveal.value=1;

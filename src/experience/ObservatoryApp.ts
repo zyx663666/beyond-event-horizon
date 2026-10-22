@@ -6,7 +6,7 @@ import { ObserverInput } from '../observer/ObserverInput';
 import { bilingual } from './bilingual';
 import { credits } from '../content/credits';
 import { ui } from '../content/uiText';
-import { escapeHtml as e } from './presentation';
+import { EXPERIENCE_DURATION, escapeHtml as e } from './presentation';
 
 /** A station-kept, continuously rendered instrument. Film time is a separate route. */
 export class ObservatoryApp {
@@ -27,10 +27,11 @@ export class ObservatoryApp {
   this.pipeline=new RenderPipeline(this.host.renderer,this.core,this.config,this.host.hdr);
   canvas.setAttribute('aria-label',ui.observatoryZh);
   this.root.className='observatory';this.root.id='observatory';
-  this.root.innerHTML=`<div class="observatory-shade"></div><button class="station-fullscreen" data-fullscreen>${bilingual(ui.fullscreen)}</button><header class="observatory-header"><span><i></i>${bilingual(ui.live)}</span><span>${bilingual(ui.verified)}</span></header><div class="station-hero"><div class="station-code">${bilingual(ui.homeTag)}</div><h1>${e(credits.title.zh)}</h1><div class="station-title-zh">${e(credits.title.en)}</div><div class="station-rule"></div><p>${e(ui.homeIntroZh)}<span>${e(ui.homeIntro)}</span></p><div class="station-actions"><a id="start-journey" href="?mode=film&quality=${this.config.qualityName}&debug=0&pass=experience"><span>${e(ui.startZh)}<small>${e(ui.start)}</small></span><b>↗</b></a><button id="free-observation"><span>${e(ui.freeZh)}<small>${e(ui.free)}</small></span><b>＋</b></button></div><small class="journey-duration">${e(ui.duration)}</small></div><div class="station-target"><span>${bilingual(ui.object)}</span><p>${bilingual(ui.fictional)}</p><div class="target-coordinate" data-station="coordinates"></div></div><div class="free-instruments" hidden><h2>${e(ui.freeZh)} <small>${e(ui.free)}</small></h2><p>${e(ui.freeHintZh)}<span>${e(ui.freeHint)}</span></p><label>${bilingual(ui.zoom)}<input id="station-zoom" type="range" min="1" max="1.6" step=".01" value="1"/></label><button id="station-reset">${bilingual(ui.reset)}</button><button id="station-back">${bilingual(ui.back)}</button><a href="?mode=film&quality=${this.config.qualityName}&debug=0">${bilingual({zh:ui.startZh,en:ui.start})}</a></div><footer class="station-footer"><div><label>${bilingual({zh:ui.observatoryZh,en:ui.observatory})}</label><strong data-station="status">${bilingual(ui.online)}</strong></div><div><label>${bilingual(ui.stationClock)}</label><strong data-station="clock">00:00:00</strong></div><div><label>${bilingual(ui.radius)}</label><strong data-station="radius"></strong></div><div><label>${bilingual(ui.model)}</label><strong>${bilingual(ui.fixedObserver)}</strong></div></footer>`;
+  this.root.innerHTML=`<div class="observatory-shade"></div><button class="station-fullscreen" data-fullscreen>${bilingual(ui.fullscreen)}</button><header class="observatory-header"><span><i></i>${bilingual(ui.live)}</span><span>${bilingual(ui.verified)}</span></header><div class="station-hero"><div class="station-code">${bilingual(ui.homeTag)}</div><h1>${e(credits.title.zh)}</h1><div class="station-title-zh">${e(credits.title.en)}</div><div class="station-rule"></div><p>${e(ui.homeIntroZh)}<span>${e(ui.homeIntro)}</span></p><div class="station-actions"><a id="start-journey" href="?mode=film&quality=${this.config.qualityName}&debug=0&pass=experience"><span>${e(ui.startZh)}<small>${e(ui.start)}</small></span><b>↗</b></a><button id="free-observation"><span>${e(ui.freeZh)}<small>${e(ui.free)}</small></span><b>＋</b></button></div><small class="journey-duration">${e(ui.duration)}</small></div><div class="station-target"><span>${bilingual(ui.object)}</span><p>${bilingual(ui.fictional)}</p><div class="target-coordinate" data-station="coordinates"></div></div><button class="export-video" id="export-video" data-state="idle" title="${e(ui.saveHint)}"><span data-export-label>${e(ui.saveZh)}<small>${e(ui.save)}</small></span><b>⤓</b></button><div class="free-instruments" hidden><h2>${e(ui.freeZh)} <small>${e(ui.free)}</small></h2><p>${e(ui.freeHintZh)}<span>${e(ui.freeHint)}</span></p><label>${bilingual(ui.zoom)}<input id="station-zoom" type="range" min="1" max="1.6" step=".01" value="1"/></label><button id="station-reset">${bilingual(ui.reset)}</button><button id="station-back">${bilingual(ui.back)}</button><a href="?mode=film&quality=${this.config.qualityName}&debug=0">${bilingual({zh:ui.startZh,en:ui.start})}</a></div><footer class="station-footer"><div><label>${bilingual({zh:ui.observatoryZh,en:ui.observatory})}</label><strong data-station="status">${bilingual(ui.online)}</strong></div><div><label>${bilingual(ui.stationClock)}</label><strong data-station="clock">00:00:00</strong></div><div><label>${bilingual(ui.radius)}</label><strong data-station="radius"></strong></div><div><label>${bilingual(ui.model)}</label><strong>${bilingual(ui.fixedObserver)}</strong></div></footer>`;
   document.querySelector('#app')!.append(this.root);
   const opt={signal:this.abort.signal};
   this.root.querySelector('#free-observation')!.addEventListener('click',()=>this.setMode(true),opt);
+  this.root.querySelector('#export-video')!.addEventListener('click',()=>{void this.startExport();},opt);
   this.root.querySelector('#station-back')!.addEventListener('click',()=>this.setMode(false),opt);
   this.root.querySelector('#station-reset')!.addEventListener('click',()=>{this.core.rig.recenter();this.core.rig.setZoom(1);(this.root.querySelector('#station-zoom') as HTMLInputElement).value='1';},opt);
   this.root.querySelector('#station-zoom')!.addEventListener('input',event=>this.core.rig.setZoom(Number((event.target as HTMLInputElement).value)),opt);
@@ -45,6 +46,40 @@ export class ObservatoryApp {
   this.resize();this.root.dispatchEvent(new CustomEvent('observatory:changed',{detail:{mode:free?'free':'station',target:'BH-A17'},bubbles:true}));
  }
  private status(message:string,error=false){const el=document.querySelector<HTMLElement>('#status')!;el.textContent=message;el.dataset.error=String(error);}
+ private exportTimer=0;
+ private setExport(zh:string,en:string,state:string){
+  const btn=this.root.querySelector<HTMLElement>('#export-video');if(!btn)return;
+  btn.dataset.state=state;
+  const label=btn.querySelector<HTMLElement>('[data-export-label]');
+  if(label)label.innerHTML=`${e(zh)}<small>${e(en)}</small>`;
+ }
+ private readonly pollExport=()=>{
+  fetch('/api/render/status').then(r=>r.json()).then((s:{state:string;message:string;file:string|null})=>{
+   if(this.disposed)return;
+   if(s.state==='done'&&s.file){
+    this.setExport(ui.savedZh,ui.saved,'done');
+    const link=document.createElement('a');link.href='/api/render/file';link.download=s.file;document.body.append(link);link.click();link.remove();
+    return;
+   }
+   if(s.state==='error'){this.setExport(ui.exportFailedZh,ui.exportFailed,'idle');return;}
+   if(s.state==='idle'){this.setExport(ui.saveZh,ui.save,'idle');return;}
+   const seconds=Number(/recording (\d+)s/.exec(s.message)?.[1]??NaN);
+   const percent=Number.isFinite(seconds)?` ${Math.min(99,Math.round(seconds/EXPERIENCE_DURATION*100))}%`:'';
+   const en=Number.isFinite(seconds)?`RECORDING ${seconds}S / ${Math.round(EXPERIENCE_DURATION)}S`:'ENCODING MP4';
+   this.setExport(`${ui.exportingZh}${percent}`,en,'busy');
+   this.exportTimer=window.setTimeout(this.pollExport,2000);
+  }).catch(()=>{if(!this.disposed)this.setExport(ui.exportFailedZh,ui.exportFailed,'idle');});
+ };
+ private async startExport(){
+  const btn=this.root.querySelector<HTMLElement>('#export-video');if(!btn||btn.dataset.state==='busy')return;
+  try{
+   const res=await fetch('/api/render',{method:'POST'});
+   if(res.status===404){this.status(ui.exportOfflineZh,true);return;}
+   if(!res.ok&&res.status!==409){this.status(`Export endpoint error ${res.status}`,true);return;}
+   this.setExport(ui.exportingZh,ui.exporting,'busy');
+   this.exportTimer=window.setTimeout(this.pollExport,1500);
+  }catch{this.status(ui.exportOfflineZh,true);}
+ }
  async start(){
   this.status(ui.preparing);await this.core.prepare(this.host.renderer,this.host.hdr);if(this.disposed)return;
   this.core.update({elapsed:250,delta:0});this.pipeline.render(0);if(this.host.shaderErrors)throw new Error('Observatory shader compilation failed');
@@ -69,5 +104,5 @@ export class ObservatoryApp {
   this.pipeline.resize(this.host.width,this.host.height,this.host.pixelRatio);
  };
  private async restore(){this.ready=false;cancelAnimationFrame(this.frame);this.pipeline.dispose();this.pipeline=new RenderPipeline(this.host.renderer,this.core,this.config,this.host.hdr);this.resize();try{await this.start();}catch(err){this.status(String(err),true);}}
- dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();this.input?.dispose();cancelAnimationFrame(this.frame);this.pipeline.dispose();this.core.dispose();this.host.dispose();this.root.remove();document.body.classList.remove('experience-mode','observatory-mode','observatory-ready');}
+ dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();clearTimeout(this.exportTimer);this.input?.dispose();cancelAnimationFrame(this.frame);this.pipeline.dispose();this.core.dispose();this.host.dispose();this.root.remove();document.body.classList.remove('experience-mode','observatory-mode','observatory-ready');}
 }

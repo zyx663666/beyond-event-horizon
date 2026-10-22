@@ -24,11 +24,12 @@ void main(){
  float stepSize=(exit-entry)/float(VOLUME_STEPS),start=entry+stepSize*.5;vec3 sum=vec3(0.);float transmission=1.;
  for(int i=0;i<VOLUME_STEPS;i++){
   vec3 p=ro+rd*(start+float(i)*stepSize);float den=density(p);if(den>.002){
-   float occlusion=density(p+vec3(-.08,.11,.02));float light=exp(-occlusion*.75);
+   float occlusion=density(p+vec3(-.09,.13,.03))*.62+density(p+vec3(.12,-.07,-.04))*.38;
+   float light=exp(-occlusion*.9);
    float mixColor=fbm(p*2.2+vec3(7.));vec3 tint=mix(vec3(.075,.18,.29),vec3(.55,.24,.11),smoothstep(.27,.58,mixColor));
    float embedded=exp(-length(p-vec3(-.23,-.08,-.27))*3.5)+.65*exp(-length(p-vec3(.22,.16,-.09))*4.);
    if(uShell>.5){tint=mix(vec3(.075,.2,.31),vec3(.52,.22,.095),smoothstep(.27,.62,mixColor));embedded=.2;}
-   float alpha=1.-exp(-den*stepSize*2.1);vec3 emission=tint*(.23+light*.56+embedded*.62);
+   float alpha=1.-exp(-den*stepSize*2.1);vec3 emission=tint*(.20+light*.72+embedded*.66);
    sum+=transmission*alpha*emission;transmission*=1.-alpha;if(transmission<.025)break;
   }
  }

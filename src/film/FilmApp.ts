@@ -69,6 +69,8 @@ export class FilmApp {
   window.addEventListener('journey:navigate',event=>{const d=(event as CustomEvent<{node:JourneyNodeId;play?:boolean}>).detail;if(d?.node)this.navigate(d.node,Boolean(d.play));},opt);
   window.addEventListener('journey:event',event=>{const d=(event as CustomEvent<{id:string;enabled:boolean}>).detail;if(d?.id&&typeof d.enabled==='boolean')this.scene.setEventEnabled(d.id,d.enabled);},opt);
   window.addEventListener('journey:hold',()=>{this.controller.hold();this.previous=null;this.syncAudio(true);this.updateUI();},opt);
+  // Offline render hook: external tools drive exact frames; DOM state is deterministic per seek.
+  window.addEventListener('journey:render-frame',event=>{const d=(event as CustomEvent<{t:number}>).detail;if(!d||typeof d.t!=='number')return;document.body.classList.add('capture-mode');this.controller.playing=false;this.seek(Math.min(Math.max(d.t,0),EXPERIENCE_DURATION));},opt);
   this.resize();this.updateUI();
  }
  private get time(){return Math.max(0,this.controller.time-INTRO_DURATION);}
@@ -81,11 +83,11 @@ export class FilmApp {
  private status(message:string,error=false){const el=document.querySelector<HTMLElement>('#status')!;el.textContent=message;el.dataset.error=String(error);}
  private seek(t:number){
   this.controller.seek(t);this.previous=null;this.dataTick=-1;
-  this.scene.update({elapsed:this.controller.time,delta:0});if(this.ready)this.pipeline.render(0);this.syncAudio(true);this.updateUI();
+  this.scene.update({elapsed:this.controller.time,delta:0});if(this.ready)this.pipeline.setCinematic(this.scene.cinematic);this.pipeline.render(0);this.syncAudio(true);this.updateUI();
  }
  async start(){
   this.status(ui.preparing);await this.scene.prepare(this.host.renderer,this.host.hdr);if(this.disposed)return;
-  this.scene.update({elapsed:this.controller.time,delta:0});this.pipeline.render(0);if(this.host.shaderErrors)throw new Error('Film shader compilation failed');
+  this.scene.update({elapsed:this.controller.time,delta:0});this.pipeline.setCinematic(this.scene.cinematic);this.pipeline.render(0);if(this.host.shaderErrors)throw new Error('Film shader compilation failed');
   this.fpsAt=performance.now();this.frameCount=0;this.ready=true;document.body.classList.add('film-ready');this.status(ui.ready);this.previous=null;this.frame=requestAnimationFrame(this.tick);
  }
  private readonly tick=(now:number)=>{
@@ -93,7 +95,7 @@ export class FilmApp {
   if(document.hidden||this.host.contextLost){this.previous=null;this.syncAudio();return;}
   const dt=this.previous===null?0:Math.max(0,(now-this.previous)/1000);this.previous=now;
   this.controller.advance(dt);
-  try{this.scene.update({elapsed:this.controller.time,delta:dt*this.controller.rate});this.pipeline.render(dt);this.syncAudio();this.updateUI();
+  try{this.scene.update({elapsed:this.controller.time,delta:dt*this.controller.rate});this.pipeline.setCinematic(this.scene.cinematic);this.pipeline.render(dt);this.syncAudio();this.updateUI();
    this.frameCount++;if(now-this.fpsAt>1500){this.fps=this.frameCount*1000/(now-this.fpsAt);this.frameCount=0;this.fpsAt=now;}
    this.root.dataset.fps=this.fps.toFixed(1);this.root.dataset.shaderErrors=String(this.host.shaderErrors);
   }catch(err){this.ready=false;this.syncAudio();this.status(String(err),true);console.error(err);}

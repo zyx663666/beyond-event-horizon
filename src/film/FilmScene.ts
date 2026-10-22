@@ -7,7 +7,8 @@ import { properAt, properAtRadius, radiusAt } from './model';
 import frag from './film.frag.glsl?raw';
 import noise from '../shaders/common/noise.glsl?raw';
 import { CosmicEnvironment } from './CosmicEnvironment';
-import { coreTime, ARRIVAL, INTERPRETATION, smooth } from './timeline';
+import { coreTime, ARRIVAL, INTERPRETATION, CROSSING, smooth } from './timeline';
+import type { CinematicState } from '../rendering/CinematicPass';
 import { CosmicJourney } from './journey/CosmicJourney';
 import { DistantCosmos } from './journey/DistantCosmos';
 import type { BlackHoleEventId } from './events';
@@ -30,6 +31,8 @@ export class FilmScene implements VisualCore {
  private readonly stars: Starfield;
  private cube: WebGLCubeRenderTarget | null = null;
  private readonly radial = new Vector3(.18, .34, .923).normalize();
+ /** Film-language state for the lens finish; updated every frame from film time. */
+ cinematic:CinematicState={time:0,grain:.028,vignette:.24,aberration:.12,shock:0};
  private readonly uniforms = { uEnvironment: new Uniform<WebGLCubeRenderTarget['texture'] | null>(null), uInverseProjection: new Uniform(new Matrix4()), uCameraToWorld: new Uniform(new Matrix4()), uPosition: new Uniform(new Vector3()), uTau: new Uniform(0), uFilm: new Uniform(0), uArt: new Uniform(0), uEnd: new Uniform(0), uPresence: new Uniform(0), uReveal: new Uniform(0), uDisruption: new Uniform(0), uEventMask:new Uniform(new Vector3(1,1,1)) };
  readonly material = new ShaderMaterial({ glslVersion: GLSL3, vertexShader: 'out vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}', fragmentShader: frag.replace('// @noise', noise), defines: { NOISE_OCTAVES: 4 }, uniforms: this.uniforms, depthTest: false, depthWrite: false, toneMapped: false });
  constructor(private readonly config: VisualConfig) {
@@ -67,6 +70,10 @@ export class FilmScene implements VisualCore {
   this.blackHole.visible = epoch < INTERPRETATION; this.cosmos.object.visible = !this.blackHole.visible; this.cosmos.update(epoch); this.journey.update(epoch);
   if(frame.elapsed<INTRO_DURATION){const opening=openingState(frame.elapsed);this.journey.revealOrigin(opening,frame.elapsed);this.uniforms.uReveal.value=opening.stars;}
   else if(journeyTime<3)this.uniforms.uReveal.value=1;
+  // Lens finish: grain and aberrations swell through the cruise, peak at the crossing.
+  const dash=smooth(184,196,t)*(1-smooth(200,206,t));
+  const shock=Math.exp(-Math.pow((t-CROSSING)/.5,2));
+  this.cinematic={time:t,grain:.022+.016*dash,vignette:.24+.08*dash,aberration:.1+.3*dash+.85*shock,shock:Math.min(1,shock*1.15)};
  }
  setEventEnabled(id:string,enabled:boolean){if(Object.hasOwn(this.eventFlags,id)){this.eventFlags[id as BlackHoleEventId]=enabled;if(id==='tidal-disruption')this.disruptionEnabled=enabled;}}
  get enabledEvents(){return Object.entries(this.eventFlags).filter(([,on])=>on).map(([id])=>id).join(',');}

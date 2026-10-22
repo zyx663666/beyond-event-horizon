@@ -269,3 +269,16 @@
 .flight-terminal { background:linear-gradient(90deg,#020910df,#020910a0 80%,transparent); }
 .hud-shade { background:linear-gradient(#010409a8,transparent 24%,transparent 60%,#010409b8 85%); }
 .event-note { background:linear-gradient(90deg,#020910aa,transparent); }
+
+/* Offline capture: DOM states must be final at every seeked frame. */
+body.capture-mode *, body.capture-mode *::before, body.capture-mode *::after { transition: none !important; animation: none !important; }
+
+/* On-page video export (local dev render endpoint), lower-right of the observatory. */
+.export-video { position:absolute; right:5%; bottom:13%; z-index:2; pointer-events:auto; display:flex; align-items:center; justify-content:space-between; gap:1.6cqw; min-width:12.5cqw; padding:.85cqw 1.05cqw; text-align:left; letter-spacing:.1em; border:1px solid #89a9b94d; background:linear-gradient(100deg,#698b9c19,transparent); color:#dbe4e7; font:.79cqw/1.4 Consolas,monospace; cursor:pointer; transition:background .35s,border-color .35s; }
+.export-video:hover { background:#698b9c28; border-color:#b7d2e07a; }
+.export-video small { display:block; font:.65cqw/1.5 'Microsoft YaHei',sans-serif; letter-spacing:.13em; margin-top:.2cqw; color:#a1b7c5; }
+.export-video b { font-size:1.25cqw; font-weight:300; color:#c8dae3; }
+.export-video[data-state=busy] b { animation:export-pulse 1.2s ease-in-out infinite; }
+.export-video[data-state=done] { border-color:#9ed3b2a1; }
+@keyframes export-pulse { 50% { opacity:.3; } }
+

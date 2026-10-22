@@ -42,6 +42,6 @@ JourneyController 是唯一影片时钟；镜头、注释、字幕、科学事�
 
 1080p、2560×1440、3840×2160 检查采用 Edge；检查的是实际 CSS 视口和 16:9 安全区。GTX 760 上以 preview 渲染档运行功能验证，不将 4K 界面截图当作原生 4K 性能测试。RTX 4060 原生 2K/4K 帧率、正式 MP3 混音及变速听感仍需实机/真实音轨验证。
 
-GitHub Actions 在 main push 后执行 npm ci → npm test → 生产构建 → 资源检查 → Pages 部署。临时截图、dist、本地缓存和私人附件由 .gitignore 排除，运行包采用资源白名单。网站沿用 https://tianshanyun.cloud/beyond-event-horizon/。
+GitHub Actions 在 main push 后执行 npm ci → npm test → 生产构建 → 资源检查 → Pages 部署。临时截图、dist、本地缓存和私人附件由 .gitignore 排除，运行包采用资源白名单。网站沿用 https://tianshanyun.cloud/beh/。
 
 浏览器实测：标准档开场与关键段抽查，高速连续回放完成至 462.000 秒，最终黑屏、音乐停止、导航待机、着色器错误数 0。生成测试音验证变速/定位/暂停，播放中模拟 WebGL 丢失及恢复后保持时间连续。正式 MP3 尚未提供，因此不宣称最终音乐听感已验收。

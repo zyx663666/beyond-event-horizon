@@ -8,5 +8,5 @@
   "loop": false,
   "highSpeedGain": 0.24,
   "credits": "continue",
-  "publishAllowed": false
+  "publishAllowed": true
 }

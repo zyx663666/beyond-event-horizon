@@ -20,10 +20,28 @@ void flow(vec3 x,vec3 p,out vec3 dx,out vec3 dp){
  dx=normalize(p)-a*e;dp=a/r*(p-1.5*e*dot(p,e));
 }
 float hash(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}
+// Authored flight-feel envelope: cruise smear out of the solar system, a short
+// dash just before the horizon. Purely cinematic — the geodesics are unchanged.
+float warpAmount(float t){
+ float cruise=smoothstep(45.,120.,t);
+ float dash=smoothstep(184.,196.,t)*(1.-smoothstep(200.,206.,t));
+ return clamp(cruise*.55+dash*.85,0.,1.);
+}
 // Authored matter dynamics on a thin emission surface; PG null propagation remains unchanged.
 // The single source field is sampled separately at each ray's retarded time. No screen image copies.
 float wrapAngle(float a){return atan(sin(a),cos(a));}
 vec2 tidalCenter(float q){float r=mix(21.,7.2,clamp(q,0.,1.));float a=mix(-.48,.18,clamp(q,0.,1.));return vec2(cos(a),sin(a))*r;}
+// Expanding ring launched by the tidal disruption across the disk plane.
+// Authored wavefront, not a hydrodynamic solution.
+vec3 tidalRing(vec3 x,float s){
+ if(uDisruption<.01)return vec3(0.);
+ float f=(s+24.)/78.;if(f<.3||f>1.18)return vec3(0.);
+ float age=f-.3,radius=age*22.;
+ vec2 c=tidalCenter(clamp(f,0.,1.));
+ float d=abs(length(x.xz-c)-radius);
+ float ring=exp(-pow(d/.6,2.))*exp(-age*1.25);
+ return vec3(1.35,.66,.26)*ring*1.6;
+}
 // A real ellipsoidal emitting body, intercepted along the curved integration segment.
 // Axes evolve as a cinematic tidal deformation; this is not a fluid solution.
 vec4 starSegment(vec3 x,vec3 next,float s){
@@ -36,9 +54,12 @@ vec4 starSegment(vec3 x,vec3 next,float s){
  vec3 b=vec3(dot(w,er),dot(w,et),dot(w,diskN))/axes;
  vec3 d=b-a;float aa=dot(d,d),bb=dot(a,d),cc=dot(a,a)-1.,disc=bb*bb-aa*cc;
  if(disc<0.||aa<.000001)return vec4(0.,0.,0.,-1.);float t=(-bb-sqrt(disc))/aa;if(t<0.||t>1.)return vec4(0.,0.,0.,-1.);
- vec3 local=a+d*t;float limb=pow(abs(dot(normalize(local),normalize(d))),.24);float grain=noise3(local*15.+s*.014);
+ vec3 local=a+d*t;float hitN=abs(dot(normalize(local),normalize(d)));float limb=pow(hitN,.24);float grain=noise3(local*15.+s*.014);
  vec3 color=mix(vec3(.8,.98,1.17),vec3(1.15,.79,.35),stretch);
- return vec4(color*(2.3+grain*.7)*(.55+limb*.45)*core*uDisruption,core>.04?t:-1.);
+ // Accretion-side heating and limb scattering: authored shading, not a radiative model.
+ float heated=pow(max(dot(normalize(local),normalize(-c)),0.),5.)*2.4*stretch;
+ float rim=pow(1.-hitN,1.7)*.55;
+ return vec4((color*(2.3+grain*.7)*(.55+limb*.45)+vec3(1.,.58,.24)*heated+color*rim)*core*uDisruption,core>.04?t:-1.);
 }
 vec3 tidalLight(vec3 x,float s){
  float f=(s+24.)/78.;if(f<0.||f>1.55||uDisruption<.001)return vec3(0.);
@@ -49,7 +70,8 @@ vec3 tidalLight(vec3 x,float s){
  float r=length(x.xz),a=atan(x.z,x.x),turn=wrapAngle(a-angle-log(max(r,.01)/radius)*2.9);
  float width=.14+stretch*.13;
  float stream=exp(-pow(turn*r/width,2.))*smoothstep(5.6,6.2,r)*(1.-smoothstep(radius,radius+.4,r))*smoothstep(.26,.7,q);
- float texture=.5+.5*noise3(vec3(x.xz*8.,s*.035));stream*=texture;
+ vec2 wx=x.xz*3.2;
+ float texture=.5+.5*fbm(vec3(wx*2.6,s*.035)+vec3(fbm(vec3(wx,s*.02))*1.5));stream*=texture;
  float stripped=exp(-pow(across/(.14+stretch*.12),2.))*smoothstep(.1,.6,along)*(1.-smoothstep(4.,7.,along))*smoothstep(.24,.68,q)*.38;
  vec3 star=mix(vec3(.8,.97,1.15),vec3(1.15,.8,.42),stretch);
  return (star*body*.5+vec3(1.7,.64,.17)*(stream*1.8+stripped))*fade*uDisruption;
@@ -58,7 +80,7 @@ vec3 gasLight(vec3 x,float s){
  float f=(s-56.)/36.;if(f<0.||f>1.45||uEventMask.y<.5)return vec3(0.);
  float q=clamp(f,0.,1.),r0=mix(16.,6.1,q),a0=3.75+q*.72,shear=smoothstep(.12,.9,q);
  vec2 c=vec2(cos(a0),sin(a0))*r0,d=x.xz-c,er=normalize(c);float along=dot(d,er),across=dot(d,vec2(-er.y,er.x));
- float irregular=smoothstep(.2,.73,fbm(vec3(x.xz*2.8,s*.024)));
+ float irregular=smoothstep(.2,.73,fbm(vec3(x.xz*2.8,s*.024)+vec3(fbm(vec3(x.xz*1.1,s*.013))*1.3)));
  float body=exp(-pow(along/(1.05+shear*2.6),2.)-pow(across/(.88-shear*.65),2.))*irregular*(1.-smoothstep(.7,1.18,f));
  float r=length(x.xz),a=atan(x.z,x.x),turn=wrapAngle(a-a0-log(max(r,.01)/r0)*3.8);
  float stream=exp(-pow(turn*r/(.2+shear*.13),2.))*smoothstep(5.1,5.8,r)*(1.-smoothstep(r0,r0+.7,r))*smoothstep(.23,.8,q)*(.4+irregular);
@@ -80,8 +102,63 @@ vec4 debrisSegment(vec3 x,vec3 next,float s){
  vec3 normal=normalize(v+d*t);float grain=noise3(normal*18.);float facing=.18+.82*abs(dot(normal,normalize(d)));
  vec3 color=mix(vec3(.25,.36,.4),vec3(1.3,.6,.17),smoothstep(.5,1.,f));return vec4(color*(.8+grain*.6)*facing,t);
 }
+// Bounded volumetric slabs above/below the disk plane give the event streams
+// apparent thickness and mutual occlusion. Authored approximation, not fluid.
+vec3 volumeEvents(vec3 x,float s,float h,inout float trans){
+ vec3 radiance=vec3(0.);float w=dot(x,diskN);
+ if(uDisruption>.001){
+  float f=(s+24.)/78.;
+  if(f>0.&&f<1.05){
+   float q=clamp(f,0.,1.),stretch=smoothstep(.2,.73,q);
+   vec2 center=tidalCenter(q),delta=x.xz-center,radial=normalize(center);
+   float radius=length(center),angle=atan(center.y,center.x),r=length(x.xz),a=atan(x.z,x.x);
+   float turn=wrapAngle(a-angle-log(max(r,.01)/radius)*2.9);
+   float width=.14+stretch*.13;
+   float stream=exp(-pow(turn*r/width,2.))*smoothstep(5.6,6.2,r)*(1.-smoothstep(radius,radius+.4,r))*smoothstep(.26,.7,q);
+   float stripped=exp(-pow(dot(delta,vec2(-radial.y,radial.x))/(.16+stretch*.14),2.))*smoothstep(.1,.6,dot(delta,radial))*(1.-smoothstep(4.,7.,dot(delta,radial)))*smoothstep(.24,.68,q);
+   float base=stream+stripped*.5;
+   if(base>.004&&abs(w)<1.6){
+    float billow=fbm(vec3(x.xz*1.9,w*3.2+s*.05));
+    float thick=(.10+stretch*.34)*(.45+.9*billow);
+    float dens=base*exp(-w*w/max(thick*thick,.0025))*(.55+.75*billow);
+    radiance+=vec3(1.7,.64,.17)*dens*h*3.5*trans*uDisruption;
+    trans*=exp(-dens*h*1.4);
+   }
+  }
+ }
+ if(uEventMask.y>.5){
+  float f=(s-56.)/36.;
+  if(f>0.&&f<1.42){
+   float q=clamp(f,0.,1.),r0=mix(16.,6.1,q),a0=3.75+q*.72,shear=smoothstep(.12,.9,q);
+   vec2 c=vec2(cos(a0),sin(a0))*r0,d=x.xz-c,er=normalize(c);
+   float along=dot(d,er),across=dot(d,vec2(-er.y,er.x));
+   float envelope=exp(-pow(along/(1.05+shear*2.6),2.)-pow(across/(.88-shear*.65),2.))*(1.-smoothstep(.7,1.18,f));
+   if(envelope>.004&&abs(w)<2.0){
+    float irregular=smoothstep(.2,.73,fbm(vec3(x.xz*2.8,s*.024)));
+    float body=envelope*irregular;
+    float r=length(x.xz),a=atan(x.z,x.x);
+    float turn=wrapAngle(a-a0-log(max(r,.01)/r0)*3.8);
+    float stream=exp(-pow(turn*r/(.2+shear*.13),2.))*smoothstep(5.1,5.8,r)*(1.-smoothstep(r0,r0+.7,r))*smoothstep(.23,.8,q)*(.4+irregular);
+    float billow=fbm(vec3(x.xz*2.3,w*2.6+s*.04));
+    float thick=(.16+shear*.30)*(.45+.95*billow);
+    float dens=(body+stream*.5)*exp(-w*w/max(thick*thick,.002))*(.5+.85*billow);
+    float fade=(1.-smoothstep(.94,1.42,f));
+    vec3 color=mix(vec3(.2,.58,.78),vec3(.92,.55,.24),shear);
+    radiance+=color*dens*h*3.2*trans*fade*uEventMask.y;
+    trans*=exp(-dens*h*1.2*fade);
+   }
+  }
+ }
+ return radiance;
+}
 float sourceStep(vec3 x,float s,float h){
- if(uDisruption>.001){float f=(s+24.)/78.;if(f>=0.&&f<.99){vec2 cp=tidalCenter(f);vec3 c=vec3(cp.x,-cp.x*diskN.x/diskN.y,cp.y);float bound=.9+smoothstep(.2,.73,f)*2.5;if(length(x-c)<bound+.7)h=min(h,.06);}}
+ float w=dot(x,diskN);
+ if(uDisruption>.001){
+  float f=(s+24.)/78.;
+  if(f>=0.&&f<.99){vec2 cp=tidalCenter(f);vec3 c=vec3(cp.x,-cp.x*diskN.x/diskN.y,cp.y);float bound=.9+smoothstep(.2,.73,f)*2.5;if(length(x-c)<bound+.7)h=min(h,.06);}
+  if(f>=0.&&f<1.05&&abs(w)<1.1&&length(x.xz)<24.)h=min(h,.25);
+ }
+ if(uEventMask.y>.5){float f=(s-56.)/36.;if(f>0.&&f<1.42&&abs(w)<1.1&&length(x.xz)<18.)h=min(h,.25);}
  if(uEventMask.z>.5){float f=(s-75.)/39.;if(f>=0.&&f<1.1){vec2 cp=debrisPosition(f);vec3 c=vec3(cp.x,-cp.x*diskN.x/diskN.y,cp.y)+diskN*.22;if(length(x-c)<.7)h=min(h,.035);}}
  return h;
 }
@@ -108,10 +185,23 @@ vec3 diskLight(vec3 x,vec3 p,float conserved,float delay){
 vec3 trace(vec3 sight){
  vec3 x=uPosition,p=-sight;
  float energy=1.-dot(normalize(x),p)/sqrt(length(x));
- float delay=0.;vec3 debris=vec3(0.);
- for(int i=0;i<260;i++){
+ float delay=0.;vec3 debris=vec3(0.);float trans=1.;
+ for(int i=0;i<300;i++){
   float r=length(x);
-  if(r>90.){vec3 sky=texture(uEnvironment,-normalize(p)).rgb;return debris+sky*clamp(pow(1./max(energy,.04),3.),.05,18.);}
+  if(r>90.){
+   vec3 sight=-normalize(p);float warp=warpAmount(uFilm);vec3 sky;
+   if(warp>.02){
+    // Stars smear along the direction of travel, longest near the sight axis.
+    // Camera motion is already baked into the sky cube; this is a shutter smear.
+    vec3 fwd=normalize(-uPosition),acc=vec3(0.);float span=warp*(.006+.09*clamp(dot(sight,fwd),0.,1.)),wsum=0.;
+    for(int k=0;k<5;k++){
+     float q=float(k)/4.;vec3 d2=normalize(sight+fwd*span*q);float weight=1.-q*.85;
+     acc+=texture(uEnvironment,d2).rgb*weight;wsum+=weight;
+    }
+    sky=acc/wsum;
+   } else sky=texture(uEnvironment,sight).rgb;
+   return debris+sky*clamp(pow(1./max(energy,.04),3.),.05,18.)*trans;
+  }
   if(r<.045)return debris;
   // Small steps near the photon sphere; large steps only in weak-field regions.
   float h=sourceStep(x,uTau-delay,clamp(r*.065,.002,3.));
@@ -121,15 +211,16 @@ vec3 trace(vec3 sight){
   vec3 nx,np;flow(x-h*mx*.5,p-h*mp*.5,nx,np);
   vec3 fx,fp;flow(x-h*nx,p-h*np,fx,fp);
   vec3 next=x-h*(dx+2.*mx+2.*nx+fx)/6.,nextP=p-h*(dp+2.*mp+2.*np+fp)/6.;
+  debris+=volumeEvents(mix(x,next,.5),uTau-delay-h*.5,h,trans);
   float d0=dot(x,diskN),d1=dot(next,diskN);
   float planeFraction=d0*d1<0.?d0/(d0-d1):2.;float planeRadius=length(mix(x,next,clamp(planeFraction,0.,1.)));
   bool opaquePlane=planeFraction<=1.&&planeRadius>=3.1&&planeRadius<=10.1;
-  if(uDisruption>.001){vec4 star=starSegment(x,next,uTau-delay-h*.5);if(star.a>=0.&&(!opaquePlane||star.a<planeFraction))return debris+star.rgb;}
-  if(uEventMask.z>.5){vec4 rock=debrisSegment(x,next,uTau-delay-h*.5);if(rock.a>=0.&&(!opaquePlane||rock.a<planeFraction))return debris+rock.rgb;}
+  if(uDisruption>.001){vec4 star=starSegment(x,next,uTau-delay-h*.5);if(star.a>=0.&&(!opaquePlane||star.a<planeFraction))return debris+star.rgb*trans;}
+  if(uEventMask.z>.5){vec4 rock=debrisSegment(x,next,uTau-delay-h*.5);if(rock.a>=0.&&(!opaquePlane||rock.a<planeFraction))return debris+rock.rgb*trans;}
   if(d0*d1<0.){
    float w=d0/(d0-d1);vec3 hit=mix(x,next,w);float hr=length(hit);
-   if(hr>.95&&hr<28.){float sourceTime=uTau-delay-h*w;debris+=tidalLight(hit,sourceTime)+gasLight(hit,sourceTime)+debrisLight(hit,sourceTime);}
-   if(hr>=3.1&&hr<=10.1)return debris+diskLight(hit,mix(p,nextP,w),energy,delay+h*w);
+   if(hr>.95&&hr<28.){float sourceTime=uTau-delay-h*w;debris+=(tidalLight(hit,sourceTime)+gasLight(hit,sourceTime)+debrisLight(hit,sourceTime))*trans;}
+   if(hr>=3.1&&hr<=10.1)return debris+(diskLight(hit,mix(p,nextP,w),energy,delay+h*w)+tidalRing(hit,uTau-delay-h*w))*trans;
   }
   x=next;p=nextP;delay+=h;
   if(length(p)>1.e5)return vec3(0.);
@@ -160,6 +251,13 @@ void main(){
  vec3 physical=uPresence<.001?background:mix(background,trace(sight),uPresence);
  vec3 color=mix(physical,interpretation(vUv),uArt);
  color*=(1.-uEnd)*uReveal;
+ // Horizon-crossing impact: brief exposure surge with a cold flash.
+ // Authored punctuation for the crossing beat, not a physical light echo.
+ float shock=exp(-pow((uFilm-200.)/.5,2.));
+ // Weighted toward the horizon: the surge reads as the hole flaring, not a global fade.
+ float toHole=clamp(dot(sight,normalize(-uPosition)),0.,1.);
+ color*=1.+shock*.26*smoothstep(.15,.75,toHole);
+ color+=vec3(.3,.38,.5)*pow(shock,4.)*.1;
  fragColor=vec4(color,1.);
 }
 

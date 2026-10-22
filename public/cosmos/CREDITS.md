@@ -4,12 +4,12 @@ These are locally stored source textures used in a coded film. They are not gene
 
 ## Earth
 
-File: `earth-blue-marble.png`, 2048 × 1024.
+File: `earth-blue-marble.png`, 5400 × 2700.
 
-NASA/Goddard Space Flight Center Scientific Visualization Studio. Blue Marble data courtesy of Reto Stöckli (NASA/GSFC Earth Observatory).
+NASA/Goddard Space Flight Center Scientific Visualization Studio. Blue Marble: Land Surface, Ocean Color and Sea Ice with topography and bathymetry, December 2004 composite. Data courtesy of Reto Stöckli (NASA/GSFC Earth Observatory) and Robert Simmon (NASA/GSFC).
 
-Source: https://svs.gsfc.nasa.gov/2915/
-Asset: https://svs.gsfc.nasa.gov/vis/a000000/a002900/a002915/bluemarble-2048.png
+Source: https://svs.gsfc.nasa.gov/73909
+Asset: https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.png
 
 Treatment: spherical projection, north-up longitude mapping, procedural atmosphere/clouds, cinematic lighting, crop and tone mapping. Cloud motion/lighting are not contemporary meteorological observations.
 
@@ -52,3 +52,11 @@ The tidal-disruption source is an original procedural thin-plane emission and au
 No additional external images were introduced. The Blue Marble surface remains the only main-journey photographic texture. Clouds and atmosphere are coded approximations. Key nebulae now include bounded 3D procedural density integration; remote galaxies are original 2.5D procedural emission planes baked into the shared sky.
 
 The stellar body and small debris are animated 3D emission/occlusion proxies intersected along the curved light path. Tidal streams and captured gas retain a thin-plane emission approximation. Matter motion and disk responses are authored, not fluid, matter-geodesic or energy-conserving simulations. Screenshots in refinement-stills are direct captures of this project's Film Mode, not external assets.
+
+## Final Polish Pass (2026-10-20)
+
+The Earth surface texture was upgraded to the 5400 × 2700 Blue Marble topography/bathymetry composite (same NASA/GSFC source family, public domain). Tidal and captured-gas streams gained a bounded volumetric emission/absorption layer above and below the disk plane for apparent thickness and mutual occlusion; turbulence is domain-warped procedural noise. These remain authored engineering approximations, not fluid simulations.
+
+## Cinematic Finish Pass (2026-10-22)
+
+All additions in this pass are authored lens and punctuation language, not new physical claims: flight-direction star streaking, an expanding tidal-disruption wavefront ring, a sub-second horizon-crossing exposure pop, and a display-space pass adding vignette, lateral chromatic split, film grain and a luminance-masked radial surge. No external assets were added; bloom was raised slightly.

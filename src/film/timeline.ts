@@ -7,6 +7,8 @@ import { preludeTime } from '../experience/presentation';
 export const CUT_DURATION=390;
 export const ARRIVAL=144;
 export const INTERPRETATION=334;
+/** Horizon crossing on the core (uFilm) clock: radiusAt(200)=1 Rs. */
+export const CROSSING=200;
 export const TARGET_LY=1200;
 export const TARGET='BH–A17';
 export const smooth=(a:number,b:number,t:number)=>{const x=Math.max(0,Math.min(1,(t-a)/(b-a)));return x*x*(3-2*x);};

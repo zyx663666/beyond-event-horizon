@@ -22,3 +22,6 @@ public/experience-stills/
 .codex-remote-attachments/
 .vite/
 *.tsbuildinfo
+
+# Offline render output.
+render-output/
