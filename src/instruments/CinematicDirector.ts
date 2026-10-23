@@ -1,10 +1,11 @@
+import { title } from '../content/title';
 import type { BlackHoleScene } from '../scene/BlackHoleScene';
 import type { ObserverSession } from '../observer/ObserverSession';
 import type { VisualConfig } from '../app/config';
 
 // Editorial cues describe the external approach; physical events come from the session.
 const CUES = [
-  { start: 3, end: 13, en: 'BEYOND EVENT HORIZON', zh: '事件视界之外', title: true },
+  { start: 3, end: 13, en: title.en, zh: title.zh, title: true },
   { start: 22, end: 30, en: 'We followed light to find the unknown.', zh: '我们沿着光，寻找未知。' },
   { start: 68, end: 78, en: 'One star. More than one path to reach us.', zh: '同一颗星，经由不同的光路抵达。' },
   { start: 139, end: 149, en: 'Two clocks. One journey.', zh: '两只钟，同一段旅程。' },

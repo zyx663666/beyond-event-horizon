@@ -1,4 +1,4 @@
-# Observation asset credits — Beyond Event Horizon 0.7
+# Observation asset credits — Beyond the Light Cone 0.7
 
 These are locally stored source textures used in a coded film. They are not generated illustrations. Source data do not describe the fictional probe trajectory.
 

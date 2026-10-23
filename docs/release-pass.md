@@ -1,10 +1,10 @@
 # 最终音频、航行控制与双语层级整合
 
-本轮保留原有 36 秒片头、390 秒航程和 36 秒片尾，总长 462 秒。没有增删宇宙场景，也没有移动视界穿越、最后回声或科学/艺术分界。
+当前保留 36 秒片头和 390 秒航程，总长 426 秒，正文结束即停止。没有增删宇宙场景，也没有移动视界穿越、最后回声或科学/艺术分界。
 
 ## 音乐接入
 
-按本轮要求，暂不随项目提供音乐。将有公开分发权的文件放在 `public/audio/score.mp3`，修改 `src/content/audio.config.json` 并重启开发服务器。`src/content/audio.ts` 提供应用配置入口。参数包含地址、音量、用户开始航行后是否启用、淡入/淡出、时间偏移、循环、高速音量及片尾行为。默认音量 0.42，淡入 4 秒、淡出 5 秒，不循环，贯穿片尾。文件不存在时显示“待接入”，不发送缺失文件请求。较短音轨自然结束，不截断影片。
+按本轮要求，暂不随项目提供音乐。将有公开分发权的文件放在 `public/audio/score.mp3`，修改 `src/content/audio.config.json` 并重启开发服务器。`src/content/audio.ts` 提供应用配置入口。参数包含地址、音量、用户开始航行后是否启用、淡入/淡出、时间偏移、循环及高速音量。默认音量 0.42，淡入 4 秒、淡出 5 秒，不循环，在影片结束前淡出并停止。文件不存在时显示“待接入”，不发送缺失文件请求。较短音轨自然结束，不截断影片。
 
 `publishAllowed` 默认 false。加入文件后，只有确认拥有仓库和网站公开分发权并改成 true，生产构建才会发布音频。构建清单自动包含该文件，网址使用 Vite BASE_URL，兼容 GitHub Pages 子路径。
 
@@ -22,18 +22,18 @@
 
 数字时率不显示在观众界面。档位改变具有扫描亮度过渡和推进条响应。原仪表中的档案航速由距离/任务纪年的差分推算，单位 c，与档位分开；黑洞段保留固有时、面积半径和中继频比，不虚构光速百分比。
 
-JourneyController 是唯一影片时钟；镜头、注释、字幕、科学事件及 Credits 都读取同一时刻。HTMLAudioElement 跟随其 currentTime 和 playbackRate，并开启 preservesPitch。定位强制对齐，常规播放在媒体时间差超过 0.16 秒时纠偏。高速模式渐减到默认音量的 24%；最好的音乐节奏仍在导演标准档。极低帧率设备的帧间显示会落后于连续媒体时钟，这不是 RTX 4060 的同步/性能验证。
+JourneyController 是唯一影片时钟；镜头、注释、字幕、科学事件 都读取同一时刻。HTMLAudioElement 跟随其 currentTime 和 playbackRate，并开启 preservesPitch。定位强制对齐，常规播放在媒体时间差超过 0.16 秒时纠偏。高速模式渐减到默认音量的 24%；最好的音乐节奏仍在导演标准档。极低帧率设备的帧间显示会落后于连续媒体时钟，这不是 RTX 4060 的同步/性能验证。
 
 浏览器规则参考：[自动播放限制](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay)、[播放速度](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playbackRate)、[保持音高](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/preservesPitch)。
 
 ## 双语与配置
 
-中文在片头、章节、HUD、对象名称、事件提示、科学注释、诗句、片尾、Observatory 和入口按钮中优先显示；英文保留为较小技术副标。整体仍只有 16:9 正式布局，其他比例使用黑边。
+中文在片头、章节、HUD、对象名称、事件提示、科学注释、诗句、Observatory 和入口按钮中优先显示；英文保留为较小技术副标。整体仍只有 16:9 正式布局，其他比例使用黑边。
 
 - `src/content/language.ts`：界面语言顺序与旧档案字符串规范化。
 - `src/content/uiText.ts`、`flight.ts`：仪器、导航与音乐状态。
 - `src/content/opening.ts`、`chapters.ts`、`annotations.ts`、`quotes.ts`、`scienceDiagrams.ts`：标题、章节、科学、哲学与图示文案。
-- `src/content/credits.ts`：署名与最终短句；原有作者/团队/学校占位保留，待作者填写。
+- `src/content/title.ts`：首页与片头共享的作品标题。
 - `src/content/audio.ts`、`audio.config.json`：音频配置。
 
 ## 发布验证
@@ -44,4 +44,4 @@ JourneyController 是唯一影片时钟；镜头、注释、字幕、科学事�
 
 GitHub Actions 在 main push 后执行 npm ci → npm test → 生产构建 → 资源检查 → Pages 部署。临时截图、dist、本地缓存和私人附件由 .gitignore 排除，运行包采用资源白名单。网站沿用 https://tianshanyun.cloud/beh/。
 
-浏览器实测：标准档开场与关键段抽查，高速连续回放完成至 462.000 秒，最终黑屏、音乐停止、导航待机、着色器错误数 0。生成测试音验证变速/定位/暂停，播放中模拟 WebGL 丢失及恢复后保持时间连续。正式 MP3 尚未提供，因此不宣称最终音乐听感已验收。
+历史浏览器验证覆盖标准档开场、关键段和高速连续回放，最终黑屏、音乐停止、导航待机、着色器错误数 0；该记录来自旧剪辑，当前时长为 426 秒。生成测试音验证变速/定位/暂停，播放中模拟 WebGL 丢失及恢复后保持时间连续。正式 MP3 尚未提供，因此不宣称最终音乐听感已验收。

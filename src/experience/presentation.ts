@@ -13,13 +13,9 @@ export function preludeTime(t:number):number {
  return t;
 }
 export const preludeRate=(t:number)=>(preludeTime(t+.001)-preludeTime(t-.001))/.002;
-export const CREDITS_DURATION=36;
 export const INTRO_DURATION=36;
-export const EXPERIENCE_DURATION=INTRO_DURATION+390+CREDITS_DURATION;
-export function creditStage(t:number){
- const x=t-390;
- return x<0?'none':x<6?'complete':x<14?'message':x<29?'authors':x<34?'closed':'black';
-}
+export const JOURNEY_DURATION=390;
+export const EXPERIENCE_DURATION=INTRO_DURATION+JOURNEY_DURATION;
 export function relayState(t:number,r:number,received:number){
  if(t>=304&&t<310&&received>=5)return 'lastAck';
  if(r<=1)return 'noPath';

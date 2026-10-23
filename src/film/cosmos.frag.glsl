@@ -108,7 +108,7 @@ vec3 network(vec2 q){
 }
 void main(){
  vec2 q=(vUv-.5)*vec2(1.7777778,1.);vec3 col;
- if(uScene>7.5){fragColor=vec4(sky(q+vec2((uEpoch-390.)*.00018,0.))*.10*(1.-smoothstep(421.,424.,uEpoch)),1.);return;}
+ if(uEpoch>=390.){fragColor=vec4(0.,0.,0.,1.);return;}
  if(uScene<.5)col=earth(q,mix(.68,.34,smoothstep(0.,34.,uEpoch)),uEpoch);
  else if(uScene<1.5)col=solar(q);
  else if(uScene<2.5)col=sky(q)*.5+galaxy(q-vec2(.08,.04),-.23,mix(1.4,1.,smoothstep(58.,82.,uEpoch)));
@@ -117,7 +117,7 @@ void main(){
  else if(uScene<5.5)col=deepfield(q);
  else {col=network(q);float home=smoothstep(373.,383.,uEpoch);col=mix(col,earth(q,.08,28.),home);}
  col*=smoothstep(0.,3.,uEpoch)*(1.-smoothstep(386.,390.,uEpoch));
- col+=sky(q)*.10*smoothstep(386.,390.,uEpoch);
+ col+=sky(q)*.10*smoothstep(386.,390.,uEpoch)*(1.-smoothstep(388.,390.,uEpoch));
  fragColor=vec4(col,1.);
 }
 

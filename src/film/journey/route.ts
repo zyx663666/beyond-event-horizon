@@ -1,13 +1,13 @@
 import { radiusAt } from '../model';
 export type Vec3 = readonly [number, number, number];
-export type JourneyNodeId = 'earth' | 'solar' | 'galactic' | 'nebula' | 'binary' | 'pulsar' | 'target' | 'blackhole' | 'horizon' | 'lastEcho' | 'art' | 'credits';
+export type JourneyNodeId = 'earth' | 'solar' | 'galactic' | 'nebula' | 'binary' | 'pulsar' | 'target' | 'blackhole' | 'horizon' | 'lastEcho' | 'art';
 export const JOURNEY_NODES = [
   { id: 'earth', start: 0, end: 32 }, { id: 'solar', start: 32, end: 57 },
   { id: 'galactic', start: 57, end: 76 }, { id: 'nebula', start: 76, end: 94 },
   { id: 'binary', start: 94, end: 110 }, { id: 'pulsar', start: 110, end: 126 },
   { id: 'target', start: 126, end: 144 }, { id: 'blackhole', start: 144, end: 291 },
   { id: 'horizon', start: 291, end: 304 }, { id: 'lastEcho', start: 304, end: 334 },
-  { id: 'art', start: 334, end: 390 }, { id: 'credits', start: 390, end: 426 },
+  { id: 'art', start: 334, end: 390 },
 ] as const;
 export const BH_CENTER: Vec3 = [0, 0, -2500];
 const norm = Math.hypot(.18, .34, .923);

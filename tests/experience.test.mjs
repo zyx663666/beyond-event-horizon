@@ -13,11 +13,12 @@ test('prelude observations remain monotone and reach all original landmarks',()=
  for(const t of [0,32,57,76,94,110,126,144]){assert.equal(p.preludeTime(t),t);assert.ok(Math.abs(p.preludeRate(t)-1)<.001);}
  for(const t of [12.5,23,47,66,115])assert.ok(Math.abs(p.preludeRate(t)-.55)<.001);
 });
-test('credits are independent of the 390-second journey and end on black',()=>{
- assert.equal(timeline.CUT_DURATION,390);assert.equal(p.EXPERIENCE_DURATION,462);
- assert.equal(p.creditStage(389.999),'none');assert.equal(p.creditStage(390),'complete');
- assert.equal(p.creditStage(397),'message');assert.equal(p.creditStage(410),'authors');assert.equal(p.creditStage(420),'closed');assert.equal(p.creditStage(426),'black');
- const c=new route.JourneyController(p.EXPERIENCE_DURATION,p.INTRO_DURATION);c.navigate('credits',true);assert.equal(c.time,426);c.advance(50);assert.equal(c.time,462);assert.equal(c.playing,false);
+test('film stops at the end of the original journey without an extra segment',()=>{
+ assert.equal(timeline.CUT_DURATION,390);assert.equal(p.EXPERIENCE_DURATION,426);
+ assert.equal(p.JOURNEY_DURATION,timeline.CUT_DURATION);
+ assert.equal(route.JOURNEY_NODES.at(-1).id,'art');assert.equal(route.JOURNEY_NODES.at(-1).end,390);
+ const c=new route.JourneyController(p.EXPERIENCE_DURATION,p.INTRO_DURATION);c.navigate('art',true);assert.equal(c.time,370);c.advance(55.9);assert.equal(c.playing,true);c.advance(.2);assert.equal(c.time,426);assert.equal(c.playing,false);
+ c.advance(50);assert.equal(c.time,426);c.seek(462);assert.equal(c.time,426);
  c.navigate('lastEcho');assert.equal(c.time,340);assert.equal(c.playing,false);
 });
 test('opening layers appear in order and preserve a clean Earth interval before HUD',()=>{
@@ -32,6 +33,6 @@ test('an inbound final acknowledgment never implies a restored outbound path',()
  assert.equal(p.relayState(280,before.r,before.received),'delayed');assert.equal(p.relayState(291,cross.r,cross.received),'noPath');
  assert.equal(p.relayState(305,echo.r,echo.received),'lastAck');assert.ok(echo.r<1);assert.equal(p.relayState(312,after.r,after.received),'noPath');
 });
-test('editable credits remain literal text, including markup characters',()=>{
+test('display copy remains literal text, including markup characters',()=>{
  assert.equal(p.escapeHtml('<A & B>'), '&lt;A &amp; B&gt;');
 });

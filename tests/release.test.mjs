@@ -8,44 +8,52 @@ const {FilmAudio}=load(path.resolve('src/audio/FilmAudio.ts'));
 const {JourneyController,JOURNEY_CUES}=load(path.resolve('src/film/journey/route.ts'));
 const {DRIVE_LEVELS}=load(path.resolve('src/content/flight.ts'));
 const {cutState}=load(path.resolve('src/film/timeline.ts'));
-const {creditStage}=load(path.resolve('src/experience/presentation.ts'));
+const {EXPERIENCE_DURATION,INTRO_DURATION}=load(path.resolve('src/experience/presentation.ts'));
 const config=JSON.parse(fs.readFileSync('src/content/audio.config.json'));
 class Media extends EventTarget {
- currentTime=0;duration=462;paused=true;seeking=false;volume=1;playbackRate=1;preservesPitch=false;plays=0;rejection=null;
+ currentTime=0;duration=EXPERIENCE_DURATION;paused=true;seeking=false;volume=1;playbackRate=1;preservesPitch=false;plays=0;rejection=null;
  play(){this.plays++;if(this.rejection)return Promise.reject(this.rejection);this.paused=false;return Promise.resolve();}
  pause(){this.paused=true;}removeAttribute(){}load(){}remove(){}
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
+
+test('score fades and stops at the shortened film end even with a longer source',async()=>{
+ const m=new Media();m.duration=600;const a=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,m);
+ a.update(EXPERIENCE_DURATION-config.fadeOut,true,1,true);a.enableFromGesture();await flush();
+ a.update(EXPERIENCE_DURATION-config.fadeOut/2,true,1,true);assert.ok(Math.abs(m.volume-config.volume/2)<1e-9);assert.equal(m.paused,false);
+ a.update(EXPERIENCE_DURATION,true,1,true);assert.equal(m.volume,0);assert.equal(m.paused,true);assert.equal(a.state,'ended');
+ a.update(0,true,1,true,true);await flush();assert.equal(m.currentTime,0);assert.equal(m.paused,false);a.dispose();
+});
 test('direct entry never autoplays, missing score is not fetched, gesture unlocks',async()=>{
- const missing=new Media(),a=new FilmAudio(config,null,462,426,missing);a.enableFromGesture();a.update(30,true,1,true);assert.equal(missing.plays,0);assert.equal(a.state,'missing');
- const m=new Media(),b=new FilmAudio(config,'score.mp3',462,426,m);b.update(40,true,1,true);assert.equal(m.plays,0);assert.equal(b.state,'muted');b.enableFromGesture();await flush();b.update(40,true,1,true);assert.equal(b.state,'online');assert.equal(m.currentTime,40);assert.equal(m.preservesPitch,true);
+ const missing=new Media(),a=new FilmAudio(config,null,EXPERIENCE_DURATION,missing);a.enableFromGesture();a.update(30,true,1,true);assert.equal(missing.plays,0);assert.equal(a.state,'missing');
+ const m=new Media(),b=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,m);b.update(40,true,1,true);assert.equal(m.plays,0);assert.equal(b.state,'muted');b.enableFromGesture();await flush();b.update(40,true,1,true);assert.equal(b.state,'online');assert.equal(m.currentTime,40);assert.equal(m.preservesPitch,true);
  b.toggleFromGesture();assert.equal(m.paused,true);b.update(100,true,1,true);assert.equal(b.state,'muted');b.dispose();
 });
 test('pause, context/visibility suspension, seek, rates and replay share film time',async()=>{
- const m=new Media(),a=new FilmAudio(config,'score.mp3',462,426,m);a.update(100,true,1,true);a.enableFromGesture();await flush();
+ const m=new Media(),a=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,m);a.update(100,true,1,true);a.enableFromGesture();await flush();
  for(const rate of [.55,1,1.75,4]){a.update(220,true,rate,true,true);assert.equal(m.currentTime,220);assert.equal(m.playbackRate,rate);assert.equal(m.paused,false);}
  assert.ok(m.volume<config.volume*.3);a.update(220,false,4,true);assert.equal(m.paused,true);a.update(220.01,false,4,true,true);assert.equal(m.currentTime,220.01);
  a.update(221,true,1,false);assert.equal(m.paused,true);a.update(221,true,1,true);await flush();assert.equal(m.paused,false);
- a.update(0,true,1,true,true);assert.equal(m.currentTime,0);assert.equal(m.volume,0);a.update(462,false,1,true);assert.equal(m.paused,true);a.dispose();
+ a.update(0,true,1,true,true);assert.equal(m.currentTime,0);assert.equal(m.volume,0);a.update(EXPERIENCE_DURATION,false,1,true);assert.equal(m.paused,true);a.dispose();
 });
 test('autoplay rejection needs another gesture, not an endless retry',async()=>{
- const m=new Media(),a=new FilmAudio(config,'score.mp3',462,426,m);m.rejection={name:'NotAllowedError'};a.update(50,true,1,true);a.enableFromGesture();await flush();assert.equal(a.state,'blocked');
+ const m=new Media(),a=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,m);m.rejection={name:'NotAllowedError'};a.update(50,true,1,true);a.enableFromGesture();await flush();assert.equal(a.state,'blocked');
  for(let i=0;i<100;i++)a.update(50+i*.02,true,1,true);assert.equal(m.plays,1);m.rejection=null;a.enableFromGesture();await flush();assert.equal(a.state,'online');a.dispose();
 });
 test('late play resolution cannot restart a muted or disposed media element',async()=>{
- const m=new Media();let resolve;m.play=()=>new Promise(r=>resolve=r);const a=new FilmAudio(config,'score.mp3',462,426,m);a.update(50,true,1,true);a.enableFromGesture();a.toggleFromGesture();m.paused=false;resolve();await flush();assert.equal(m.paused,true);a.dispose();
+ const m=new Media();let resolve;m.play=()=>new Promise(r=>resolve=r);const a=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,m);a.update(50,true,1,true);a.enableFromGesture();a.toggleFromGesture();m.paused=false;resolve();await flush();assert.equal(m.paused,true);a.dispose();
 });
 test('short scores stop, optional looping and offset follow the film clock',async()=>{
- const m=new Media();m.duration=20;const a=new FilmAudio({...config,offsetSeconds:10,loop:true},'score.mp3',462,426,m);a.update(5,true,1,true);a.enableFromGesture();await flush();a.update(5,true,1,true);assert.equal(m.paused,true);a.update(35,true,1,true);await flush();assert.equal(m.currentTime,5);assert.equal(m.paused,false);a.dispose();
- const b=new FilmAudio(config,'score.mp3',462,426,new Media());b.element.duration=10;b.enableFromGesture();await flush();b.update(11,true,1,true);assert.equal(b.state,'ended');assert.equal(b.element.paused,true);b.dispose();
+ const m=new Media();m.duration=20;const a=new FilmAudio({...config,offsetSeconds:10,loop:true},'score.mp3',EXPERIENCE_DURATION,m);a.update(5,true,1,true);a.enableFromGesture();await flush();a.update(5,true,1,true);assert.equal(m.paused,true);a.update(35,true,1,true);await flush();assert.equal(m.currentTime,5);assert.equal(m.paused,false);a.dispose();
+ const b=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,new Media());b.element.duration=10;b.enableFromGesture();await flush();b.update(11,true,1,true);assert.equal(b.state,'ended');assert.equal(b.element.paused,true);b.dispose();
 });
 test('all drive levels preserve full journey cue order and causal landmarks',()=>{
- for(const level of DRIVE_LEVELS){const c=new JourneyController(462,36),cues=[];c.setRate(level.rate);c.onCue(cue=>cues.push(cue.id));if(level.rate===0){c.advance(999);assert.equal(c.time,0);continue;}
+ for(const level of DRIVE_LEVELS){const c=new JourneyController(EXPERIENCE_DURATION,INTRO_DURATION),cues=[];c.setRate(level.rate);c.onCue(cue=>cues.push(cue.id));if(level.rate===0){c.advance(999);assert.equal(c.time,0);continue;}
   for(let wall=0;c.playing&&wall<10000;wall++)c.advance(.2);
-  assert.equal(c.time,462);assert.deepEqual(cues,JOURNEY_CUES.map(c=>c.id));
-  c.seek(327);assert.equal(cutState(c.time-36).r,1);c.seek(341);assert.equal(cutState(c.time-36).received,5);c.seek(446);assert.equal(creditStage(c.time-36),'authors');
+  assert.equal(c.time,EXPERIENCE_DURATION);assert.deepEqual(cues,JOURNEY_CUES.map(c=>c.id));
+  c.seek(327);assert.equal(cutState(c.time-36).r,1);c.seek(341);assert.equal(cutState(c.time-36).received,5);c.seek(446);assert.equal(c.time,EXPERIENCE_DURATION);assert.equal(cutState(c.time-INTRO_DURATION).art,true);
  }
 });
 test('negative and non-finite drive inputs cannot reverse causality',()=>{
- const c=new JourneyController(462);for(const rate of [-1,Infinity,NaN,10])c.setRate(rate);assert.equal(c.rate,1);c.advance(20);c.hold();c.advance(999);assert.equal(c.time,20);
+ const c=new JourneyController(EXPERIENCE_DURATION);for(const rate of [-1,Infinity,NaN,10])c.setRate(rate);assert.equal(c.rate,1);c.advance(20);c.hold();c.advance(999);assert.equal(c.time,20);
 });

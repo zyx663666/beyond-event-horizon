@@ -14,7 +14,6 @@ import { blackHoleEventAt } from './events';
 import { JourneyController, JOURNEY_NODES, nodeAt, type JourneyNodeId } from './journey/route';
 import { ui, objectLabels, timelineLabels } from '../content/uiText';
 import { AnchorAnnotation } from '../experience/AnchorAnnotation';
-import { CreditsOverlay } from '../experience/CreditsOverlay';
 import { EXPERIENCE_DURATION, INTRO_DURATION, escapeHtml as e, preludeTime, relayState } from '../experience/presentation';
 import { OpeningSequence, openingState } from '../experience/OpeningSequence';
 import { opening } from '../content/opening';
@@ -27,13 +26,12 @@ export class FilmApp {
  private readonly host:RendererHost;
  private readonly scene:FilmScene;
  private pipeline:RenderPipeline;
- private readonly audio=new FilmAudio(audioConfig,scoreUrl,EXPERIENCE_DURATION,INTRO_DURATION+390);
+ private readonly audio=new FilmAudio(audioConfig,scoreUrl,EXPERIENCE_DURATION);
  private readonly flight=new FlightControls(this.audio,index=>this.setDrive(index));
  private driveIndex=DEFAULT_DRIVE;
  private readonly abort=new AbortController();
  private readonly root=document.createElement('section');
  private readonly annotation=new AnchorAnnotation();
- private readonly credits=new CreditsOverlay();
  private readonly opening=new OpeningSequence();
  private readonly controller=new JourneyController(EXPERIENCE_DURATION,INTRO_DURATION);
  private previous:number|null=null;
@@ -54,7 +52,7 @@ export class FilmApp {
   this.root.querySelectorAll<HTMLElement>('[data-ui]').forEach(el=>this.fields.set(el.dataset.ui!,el));
   this.metrics=[...this.root.querySelectorAll<HTMLElement>('.telemetry-cell')];
   this.seekInput=this.root.querySelector('#film-seek')!;
-  this.root.append(this.annotation.element,this.credits.element,this.opening.element,this.flight.element,this.audio.element);document.querySelector('#app')!.append(this.root);
+  this.root.append(this.annotation.element,this.opening.element,this.flight.element,this.audio.element);document.querySelector('#app')!.append(this.root);
   const opt={signal:this.abort.signal};
   this.root.querySelector('#film-play')!.addEventListener('click',()=>{if(this.controller.time>=EXPERIENCE_DURATION)this.restart();else {this.controller.playing=!this.controller.playing;this.previous=null;this.syncAudio(true);this.updateUI();}},opt);
   this.root.querySelector('#film-replay')!.addEventListener('click',()=>this.restart(),opt);
@@ -101,10 +99,10 @@ export class FilmApp {
   }catch(err){this.ready=false;this.syncAudio();this.status(String(err),true);console.error(err);}
  };
  private updateUI(){
-  const screen=this.controller.time,t=this.time,s=cutState(t),shot=s.shot,inCredits=t>=390,intro=openingState(screen);
+  const screen=this.controller.time,t=this.time,s=cutState(t),shot=s.shot,intro=openingState(screen);
   this.opening.update(screen);this.root.dataset.opening=String(intro.active);
   const hud=intro.chapter*(1-smooth(386,390,t));
-  this.root.style.setProperty('--hud',String(hud));this.root.dataset.credits=String(inCredits);
+  this.root.style.setProperty('--hud',String(hud));
   this.root.dataset.paused=String(!this.controller.playing);this.root.dataset.finished=String(screen>=EXPERIENCE_DURATION);
   const chapterKey=intro.active?'opening':String(shot.start);
   if(this.chapter!==chapterKey){this.chapter=chapterKey;this.text('chapter',intro.active?opening.originZh:`${String(SCENES.indexOf(shot)+1).padStart(2,'0')} · ${shot.zh}`);this.text('chapter-zh',intro.active?opening.origin:shot.en);}
@@ -138,14 +136,14 @@ export class FilmApp {
    this.metrics[4].dataset.warning=String(s.model&&t>=230);this.metrics[4].dataset.relay=relay;
    if(s.model&&s.inside&&t<310)setBilingual(this.metrics[4].querySelector('small')!,ui.inbound);
   }
-  this.credits.update(t);this.flight.update(this.driveIndex,this.controller.playing,screen);
+  this.flight.update(this.driveIndex,this.controller.playing,screen);
   this.field('progress').style.transform=`scaleX(${screen/EXPERIENCE_DURATION})`;
   this.root.querySelectorAll<HTMLElement>('[data-node]').forEach(button=>{const node=JOURNEY_NODES.find(n=>n.id===button.dataset.node)!;button.dataset.passed=String(screen>=node.start+INTRO_DURATION);button.setAttribute('aria-current',String(nodeAt(t).id===node.id));});
   this.seekInput.value=String(screen);this.seekInput.setAttribute('aria-valuetext',`${clock(screen)} / ${clock(EXPERIENCE_DURATION)}`);
   this.root.querySelector('#film-time')!.textContent=`${clock(screen)} / ${clock(EXPERIENCE_DURATION)}`;
   setBilingual(this.root.querySelector('#film-play')!,this.controller.playing?ui.pause:screen>=EXPERIENCE_DURATION?ui.replay:ui.play);
   (this.root.querySelector('#chapter-select') as HTMLSelectElement).value=nodeAt(t).id;
-  Object.assign(this.root.dataset,{events:this.scene.enabledEvents,event:matterEvent?.id??'',feeding:String(this.scene.tidalEventEnabled),node:nodeAt(t).id,camera:this.scene.camera.position.toArray().map(v=>v.toFixed(5)).join(','),targetPresence:smooth(118,127,t).toFixed(5),prepass:'release',drive:DRIVE_LEVELS[this.controller.playing?this.driveIndex:0].id,rate:String(this.controller.playing?this.controller.rate:0),audio:this.audio.state,time:screen.toFixed(3),journeyTime:t.toFixed(3),localTime:s.local.toFixed(3),radius:s.model?s.r.toFixed(6):'',echoes:s.model?String(s.received):'0',phase:intro.active?'opening':inCredits?'credits':s.art?'art':s.model?s.inside?'interior':'exterior':'archive',shot:shot.id,hold:'false',inspect:annotation});
+  Object.assign(this.root.dataset,{events:this.scene.enabledEvents,event:matterEvent?.id??'',feeding:String(this.scene.tidalEventEnabled),node:nodeAt(t).id,camera:this.scene.camera.position.toArray().map(v=>v.toFixed(5)).join(','),targetPresence:smooth(118,127,t).toFixed(5),prepass:'release',drive:DRIVE_LEVELS[this.controller.playing?this.driveIndex:0].id,rate:String(this.controller.playing?this.controller.rate:0),audio:this.audio.state,time:screen.toFixed(3),journeyTime:t.toFixed(3),localTime:s.local.toFixed(3),radius:s.model?s.r.toFixed(6):'',echoes:s.model?String(s.received):'0',phase:screen>=EXPERIENCE_DURATION?'finished':intro.active?'opening':s.art?'art':s.model?s.inside?'interior':'exterior':'archive',shot:shot.id,hold:'false',inspect:annotation});
  }
  private readonly resize=()=>{if(this.disposed)return;this.host.resize();this.scene.resize(this.host.width,this.host.height,this.host.pixelRatio);this.pipeline.resize(this.host.width,this.host.height,this.host.pixelRatio);};
  private async restore(){this.ready=false;this.syncAudio(true);cancelAnimationFrame(this.frame);this.pipeline.dispose();this.pipeline=new RenderPipeline(this.host.renderer,this.scene,this.config,this.host.hdr);this.resize();try{await this.start();}catch(err){this.status(String(err),true);}}

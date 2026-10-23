@@ -1,6 +1,6 @@
-"""Generate the original synthesized score for Beyond Event Horizon.
+"""Generate the original synthesized score for Beyond the Light Cone.
 
-Produces `public/audio/score.mp3` (462 s stereo, matching the full film clock).
+Produces `public/audio/score.mp3` (426 s stereo, matching the full film clock).
 The score is generated programmatically by this script: original work with no
 third-party rights, which is why `publishAllowed` may be set to true.
 
@@ -13,7 +13,7 @@ import numpy as np
 import lameenc
 
 SR = 44100
-DURATION = 462.0
+DURATION = 426.0
 N = int(SR * DURATION)
 T = np.arange(N, dtype=np.float64) / SR
 
@@ -91,14 +91,13 @@ l, r = tone((ROOT * 2 ** 6 / 12) * 2, detune=0.002)
 add(l, r, env, env)
 del l, r, env
 
-# 4. Chord pads — harmonic colour for departure, epilogue and credits.
+# 4. Chord pads — harmonic colour for departure and epilogue.
 CHORDS = [
     (36, 84,  [110.0, 164.81, 220.0, 246.94, 329.63], 0.040),   # Am9
     (60, 108, [87.31, 130.81, 174.61, 220.0, 261.63], 0.040),   # Fmaj7
     (84, 130, [98.0, 146.83, 196.0, 293.66], 0.040),            # Gsus2
     (108, 144, [110.0, 164.81, 220.0, 261.63], 0.038),          # Am7
     (370, 426, [130.81, 196.0, 261.63, 329.63, 392.0], 0.042),  # Cmaj9
-    (426, 462, [110.0, 164.81, 246.94, 329.63, 440.0], 0.046),  # Am(add9) resolve
 ]
 for start, end, freqs, amp in CHORDS:
     atk = rel = min(9.0, (end - start) * 0.3)

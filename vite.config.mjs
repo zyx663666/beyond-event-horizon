@@ -4,7 +4,7 @@ import { basename } from 'node:path';
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DEPLOY_ASSETS, HAS_SCORE, AUDIO_SETTINGS } from './scripts/deploy-assets.mjs';
+import { DEPLOY_ASSETS, HAS_SCORE, AUDIO_SETTINGS, HAS_OFFLINE_VIDEO } from './scripts/deploy-assets.mjs';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
@@ -67,9 +67,11 @@ function deploymentBase(value = '/') {
 }
 
 export default defineConfig(({ command, isPreview }) => ({
-  define: { __BEH_HAS_SCORE__: JSON.stringify(HAS_SCORE) },
+  define: { __BEH_HAS_SCORE__: JSON.stringify(HAS_SCORE), __BEH_HAS_OFFLINE_VIDEO__: JSON.stringify(HAS_OFFLINE_VIDEO) },
   // Normal local development always stays at /. Actions supplies the Pages pathname.
   base: command === 'serve' && !isPreview ? '/' : deploymentBase(process.env.VITE_BASE_PATH),
+  // Browser diagnostics can contain locked files and are never application inputs.
+  server: { watch: { ignored: ['**/artifacts/**'] } },
   build: { copyPublicDir: false, sourcemap: false },
   plugins: [localRenderEndpoint(), {
     name: 'runtime-assets-only',

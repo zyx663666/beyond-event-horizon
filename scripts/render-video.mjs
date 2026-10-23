@@ -1,11 +1,11 @@
 /**
- * Offline render for Beyond Event Horizon.
+ * Offline render for Beyond the Light Cone.
  *
  * Two modes:
  *  realtime (default) — plays the film live in a headless browser and captures
  *    the full page (canvas + HUD + subtitles + controls, exactly as presented)
  *    as a timestamped JPEG frame stream, then muxes it with the score into one
- *    MP4. Wall time ≈ film length (7:42) + encoding, i.e. ~15-25 min total.
+ *    MP4. Wall time ≈ film length (7:06) + encoding, i.e. ~15-25 min total.
  *  frame (--frame) — seeks deterministically frame by frame at a fixed
  *    timestep. Slower (every frame waits for the GPU and a full screenshot),
  *    but pixel-exact pacing; use it for a master copy when time is no issue.
@@ -44,17 +44,17 @@ const crf = Number(flag('crf', 17));
 const x264preset = flag('preset', 'fast'); // medium trades CPU time for size; crf 17 keeps quality
 const port = Number(flag('port', 5179));
 const keepFrames = has('keep-frames');
-const out = path.resolve(flag('out', path.join(root, 'render-output', `beyond-event-horizon-${quality}${mode === 'frame' ? `-${fps}fps` : ''}.mp4`)));
+const out = path.resolve(flag('out', path.join(root, 'render-output', `beyond-light-cone-${quality}${mode === 'frame' ? `-${fps}fps` : ''}.mp4`)));
 const VIEWPORTS = { preview: [1280, 720], target: [2560, 1440], ultra: [3840, 2160] };
 if (!VIEWPORTS[quality]) throw new Error(`Unknown --quality ${quality}; use preview|target|ultra`);
 const [width, height] = VIEWPORTS[quality];
 
 // Film length comes from the single source of truth in presentation.ts.
 const presentation = readFileSync(path.join(root, 'src/experience/presentation.ts'), 'utf8');
-const cred = Number(presentation.match(/CREDITS_DURATION\s*=\s*([\d.]+)/)?.[1]);
+const journey = Number(presentation.match(/JOURNEY_DURATION\s*=\s*([\d.]+)/)?.[1]);
 const intro = Number(presentation.match(/INTRO_DURATION\s*=\s*([\d.]+)/)?.[1]);
-var FILM_END = intro + 390 + cred;   // EXPERIENCE_DURATION = INTRO_DURATION + 390 + CREDITS_DURATION
-if (![intro, cred].every(Number.isFinite)) throw new Error('Could not read durations from presentation.ts');
+const FILM_END = intro + journey;
+if (![intro, journey].every(Number.isFinite)) throw new Error('Could not read durations from presentation.ts');
 const maxSeconds = Math.min(Number(flag('max-seconds', 0)) || Infinity, FILM_END + 30);
 const t0 = Math.max(0, Number(flag('t0', 0)));
 const t1 = Math.min(Number(flag('t1', FILM_END)), FILM_END);
@@ -134,7 +134,7 @@ const audioArgs = videoLengthSeconds => hasScore
 const encodeArgs = videoLengthSeconds => [...audioArgs(videoLengthSeconds),
   '-c:v', 'libx264', '-preset', x264preset, '-crf', String(crf), '-pix_fmt', 'yuv420p',
   ...(hasScore ? ['-c:a', 'aac', '-b:a', '192k'] : []),
-  '-shortest', '-movflags', '+faststart'];
+  '-t', String(videoLengthSeconds), '-shortest', '-movflags', '+faststart'];
 const startFfmpeg = (inputArgs, videoLengthSeconds) => {
   const ffmpeg = spawn(ffmpegBin, ['-y', ...inputArgs, ...encodeArgs(videoLengthSeconds), out], { stdio: ['pipe', 'ignore', 'pipe'] });
   ffmpeg.stdin.setMaxListeners(0); // one write/error listener pair per frame; disable the warning
@@ -216,7 +216,7 @@ if (mode === 'realtime') {
   await writes;
   if (n < 10) throw new Error(`only ${n} frames captured — screencast failed`);
   const tail = Math.max(0.033, (performance.now() / 1000 - firstTs) - lastRel);
-  const videoLength = lastRel + tail;
+  const videoLength = Math.min(lastRel + tail, FILM_END, maxSeconds);
   const outFps = 30;
   const totalOut = Math.max(2, Math.round(videoLength * outFps));
   console.log(`captured ${n} frames · ${(n / videoLength).toFixed(1)} fps avg · ${videoLength.toFixed(1)}s — encoding MP4 @ ${outFps} fps…`);

@@ -92,29 +92,6 @@
 .experience-controls a { margin-left:auto; }
 .experience-about summary { margin:0; color:#a9bac5; }
 .experience-about p { position:absolute; right:0; bottom:2.7cqw; width:36cqw; padding:1.4cqw; font:.72cqw/1.9 'Segoe UI','Microsoft YaHei',sans-serif; background:#030a11f2; border:1px solid #7295ab44; color:#cad6dc; }
-.experience-film[data-credits=true] .mission-timeline { opacity:0; }
-.experience-film[data-credits=true] :is(.mission-header,.mission-telemetry,.event-note,.mission-poem,.system-boot) { visibility:hidden; }
-.experience-film[data-credits=true] .mission-timeline:hover,.experience-film[data-credits=true] .mission-timeline:focus-within { opacity:.8; }
-.experience-film[data-credits=true] .experience-controls { opacity:0; }
-.experience-film[data-credits=true] .experience-controls:hover,.experience-film[data-credits=true] .experience-controls:focus-within { opacity:1; }
-.credits-overlay { position:absolute; inset:14% 20% 17%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#d8e1e5; pointer-events:none; }
-.credits-overlay h2 { font-size:1.8cqw; font-weight:300; letter-spacing:.25em; margin:1.1cqw 0; }
-.credits-overlay p { font-size:.89cqw; letter-spacing:.22em; color:#aebdc6; margin:.55cqw 0; }
-.archive-seal { font-size:2cqw; color:#b7c7d2; }
-.credits-overlay blockquote { font-size:1.8cqw; line-height:1.7; letter-spacing:.09em; margin:0 0 .8cqw; white-space:pre-line; }
-.credits-title { font-size:.78cqw; letter-spacing:.22em; color:#9badb9; }
-.credits-title span { display:block; margin-top:.6cqw; font-size:.72cqw; letter-spacing:.24em; }
-.author-name { margin-top:1.8cqw; }
-.author-name > small { font:.64cqw Consolas,'Microsoft YaHei',monospace; letter-spacing:.12em; color:#93aaba; }
-.author-name h2 { font-size:1.8cqw; margin:.65cqw 0 1.25cqw; }
-.credit-roles { width:33cqw; display:grid; gap:.72cqw; margin:0 auto; }
-.credit-roles > div { display:flex; text-align:left; justify-content:space-between; align-items:flex-start; }
-.credit-roles span { font-size:.75cqw; line-height:1.5; color:#c1ced5; }
-.credit-roles small { display:block; font-size:.63cqw; color:#91a5b1; }
-.credit-roles b { font-size:.78cqw; font-weight:400; color:#d8dcd9; line-height:1.5; }
-.credit-affiliations { display:flex; gap:2.5cqw; margin-top:1.7cqw; font-size:.7cqw; color:#bdcbd3; }
-.credit-affiliations small { display:block; font:.53cqw/2 Consolas,monospace; color:#8fa3b0; }
-.credits-sources { font:.53cqw/1.9 Consolas,monospace; color:#8395a1; margin-top:1.5cqw; }
 .observatory { position:absolute; inset:0; pointer-events:none; color:#dbe4e7; }
 .observatory-shade { position:absolute; inset:0; background:linear-gradient(90deg,#02070bea 0%,#02070baf 25%,#02070b16 54%,transparent 77%),linear-gradient(0deg,#01060adb,transparent 30%); }
 .observatory-header { position:absolute; top:5%; left:4.8%; right:4.8%; display:flex; justify-content:space-between; font:.65cqw/1.5 Consolas,monospace; letter-spacing:.13em; color:#b0c7d3; }
@@ -203,14 +180,6 @@
 .experience-controls { font-size:.74cqw; bottom:1%; }
 .experience-controls .lang-secondary { font-size:.57cqw; }
 .experience-controls select { font-size:.67cqw; max-width:15cqw; }
-.credits-title { font-size:1.22cqw; color:#c5d1d8; }
-.credits-title span { font-size:.77cqw; }
-.credit-roles span { font-size:.87cqw; }
-.credit-roles small { font-size:.65cqw; }
-.credit-affiliations { font-size:.8cqw; }
-.credit-affiliations small { font-size:.7cqw; }
-.credits-sources { font-size:.66cqw; }
-.credits-sources .lang-secondary { font-size:.56cqw; }
 .station-hero h1 { font-size:3.6cqw; font-weight:400; letter-spacing:.17em; }
 .station-title-zh { font:1.15cqw/1.6 'Segoe UI',sans-serif; letter-spacing:.24em; }
 .station-hero p { font-size:1.04cqw; }
@@ -254,8 +223,6 @@
 .drive-menu .lang-secondary { font-size:.59cqw; }
 .drive-menu button[aria-pressed=true] { color:#ead3ac; }
 .drive-menu button:hover { background:#6e94a421; }
-.experience-film[data-credits=true] .flight-terminal { opacity:0; }
-.experience-film[data-credits=true] .flight-terminal:hover,.experience-film[data-credits=true] .flight-terminal:focus-within { opacity:1; }
 .experience-film[data-opening=true] .flight-terminal { pointer-events:none; }
 .experience-film[data-opening=true] .flight-terminal:focus-within { opacity:1; pointer-events:auto; }
 
@@ -282,3 +249,31 @@ body.capture-mode *, body.capture-mode *::before, body.capture-mode *::after { t
 .export-video[data-state=done] { border-color:#9ed3b2a1; }
 @keyframes export-pulse { 50% { opacity:.3; } }
 
+
+.experience-film[data-finished=true] :is(.mission-header,.mission-telemetry,.event-note,.mission-poem,.system-boot) { visibility:hidden; }
+
+/* Leave room for the recorded-film entry below the directed journey. */
+.station-hero { top:16.5%; }
+#start-offline { border-color:#bba37c52; background:linear-gradient(100deg,#bba37c12,transparent); }
+#start-offline b { color:#dfc9a7; }
+
+/* Recorded playback is independent of the realtime scene and its HUD. */
+.offline-mode #scene,.offline-mode #status { display:none; }
+.offline-film { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 43%,#0c1a26,#02060b 72%); color:#dbe4e7; }
+.offline-header { position:absolute; top:5%; left:6%; right:6%; display:flex; justify-content:space-between; align-items:center; }
+.offline-header h1 { font:400 1.8cqw/1.5 'Microsoft YaHei',sans-serif; letter-spacing:.2em; margin:0; }
+.offline-header p { font:.65cqw/1.5 'Segoe UI',sans-serif; letter-spacing:.2em; color:#9bb0bf; margin:.35cqw 0 0; }
+.offline-header > span { text-align:right; font-size:.8cqw; }
+.offline-header .lang-secondary { font-size:.6cqw; }
+.offline-screen { position:absolute; inset:17% 6% 12%; border:1px solid #89a9b933; background:#000; }
+.offline-screen video { display:block; width:100%; height:100%; object-fit:contain; background:#000; }
+.offline-message { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:radial-gradient(ellipse,#10202c80,transparent 68%); padding:3cqw; }
+.offline-symbol { display:grid; place-items:center; width:5.5cqw; height:5.5cqw; border:1px solid #a6c1d049; border-radius:50%; font:300 3cqw/1 'Segoe UI',sans-serif; color:#cdb58f; padding-left:.25cqw; margin-bottom:1.2cqw; }
+.offline-message h2 { font:400 1.5cqw/1.6 'Microsoft YaHei',sans-serif; letter-spacing:.12em; margin:0 0 .7cqw; }
+.offline-message p { font:.85cqw/1.8 'Microsoft YaHei',sans-serif; color:#9bb0bf; margin:0; }
+.offline-message button { margin-top:1.5cqw; padding:.65cqw 1.25cqw; border:1px solid #89a9b94d; font-size:.8cqw; }
+.offline-footer { position:absolute; bottom:4.8%; left:6%; right:6%; display:flex; justify-content:space-between; align-items:center; gap:2cqw; font:.75cqw/1.6 'Microsoft YaHei',sans-serif; color:#a6bac6; }
+.offline-footer a { display:flex; align-items:center; gap:.6cqw; }
+.offline-footer .lang-primary { font-size:.8cqw; }
+.offline-footer .lang-secondary { font-size:.6cqw; }
+.offline-footer button { padding:.3cqw 0; }

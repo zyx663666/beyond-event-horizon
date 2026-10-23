@@ -20,7 +20,7 @@ export class CosmicEnvironment {
   textures.forEach(t=>{t.colorSpace=SRGBColorSpace;t.anisotropy=4;});this.textures=textures;
   this.uniforms.uEarth.value=textures[0];
  }
- update(t:number){const id=shotAt(t).id;this.uniforms.uEpoch.value=t;this.uniforms.uScene.value=t>=390?8:Math.max(0,['earth','solar','galaxy','nursery','remnant','deepfield','network','universe'].indexOf(id));}
+ update(t:number){const id=shotAt(t).id;this.uniforms.uEpoch.value=t;this.uniforms.uScene.value=Math.max(0,['earth','solar','galaxy','nursery','remnant','deepfield','network','universe'].indexOf(id));}
  dispose(){this.disposed=true;this.textures.forEach(t=>t.dispose());this.material.dispose();this.geometry.dispose();}
 }
 

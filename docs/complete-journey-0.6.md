@@ -1,4 +1,4 @@
-# Beyond Event Horizon — 完整体验 0.6
+# Beyond the Light Cone — 完整体验 0.6
 
 入口：<http://127.0.0.1:5176/?mode=film&quality=target&debug=0>。总长 **300 秒**，16:9。此次重编排整个航程，未在旧五分钟尾部追加时长。
 

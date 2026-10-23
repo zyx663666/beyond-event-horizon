@@ -1,19 +1,20 @@
 import { App } from './app/App';
 import { FilmApp } from './film/FilmApp';
 import { ObservatoryApp } from './experience/ObservatoryApp';
+import { OfflineFilmApp } from './experience/OfflineFilmApp';
 import legacy from './content/legacy.html?raw';
-import { credits } from './content/credits';
+import { title } from './content/title';
 import { installViewportControls } from './experience/ViewportControls';
 import './style.css';
 import './experience.css';
 
-let app: App | FilmApp | ObservatoryApp | undefined;
+let app: App | FilmApp | ObservatoryApp | OfflineFilmApp | undefined;
 const lifecycle = new AbortController();
 installViewportControls(lifecycle.signal);
 function launch(userInitiated=false): void {
 app?.dispose();
 try {
-  document.title=`${credits.title.zh} · ${credits.title.en}`;
+  document.title=`${title.zh} · ${title.en}`;
   const mode=new URLSearchParams(location.search).get('mode');
   if(mode==='lab'){
     document.querySelector('#status')?.remove();
@@ -22,7 +23,7 @@ try {
     lab.innerHTML=legacy;
   }
   const canvas=document.querySelector<HTMLCanvasElement>('#scene')!;
-  app = mode==='film'?new FilmApp(canvas,userInitiated):mode==='lab'?new App(canvas):new ObservatoryApp(canvas);
+  app = mode==='offline'?new OfflineFilmApp(userInitiated):mode==='film'?new FilmApp(canvas,userInitiated):mode==='lab'?new App(canvas):new ObservatoryApp(canvas);
   app.start().catch(reportError);
 } catch (error) { reportError(error); }
 }
@@ -31,7 +32,7 @@ launch();
 document.addEventListener('click',event=>{
  if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||!(event.target instanceof Element))return;
  const link=event.target.closest<HTMLAnchorElement>('a[href]');if(!link||link.target||link.hasAttribute('download'))return;
- const url=new URL(link.href);if(url.origin!==location.origin||url.pathname!==location.pathname||!['film','observatory','free'].includes(url.searchParams.get('mode')??''))return;
+ const url=new URL(link.href);if(url.origin!==location.origin||url.pathname!==location.pathname||!['film','observatory','free','offline'].includes(url.searchParams.get('mode')??''))return;
  event.preventDefault();history.pushState(null,'',url);launch(true);
 },{signal:lifecycle.signal});
 window.addEventListener('popstate',()=>launch(),{signal:lifecycle.signal});
