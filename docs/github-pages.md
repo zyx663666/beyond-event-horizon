@@ -1,45 +1,67 @@
 # GitHub Pages deployment
 
-The repository is a static Vite + TypeScript + Three.js/WebGL2 application. GitHub Pages serves `dist/`; no backend, account or database is needed to view it.
+The repository is `https://github.com/zyx663666/beyond-event-horizon`.
+The project domain is `https://bs.beiguo.fun/`, bound specifically to this repository.
+The site is a static Vite + TypeScript + Three.js/WebGL2 application served from `dist/`.
 
-## Repository and automatic deployment
+## Custom domain
 
-1. Create a public repository named `beh`, without initializing conflicting starter files. (The project was previously named `beyond-event-horizon`; GitHub keeps redirects for the old name after a rename.)
-2. Push this project root to its `main` branch.
-3. Open Settings → Pages → Build and deployment → Source, and select **GitHub Actions**.
-4. A main-branch push runs `.github/workflows/deploy-pages.yml`. If the first push preceded enabling Pages, use Actions → Deploy Beyond the Light Cone → Run workflow.
-5. A successful deployment appears in the github-pages environment. The URL format is `https://USERNAME.github.io/REPOSITORY/`.
+In the repository's Settings → Pages, keep the publishing source set to GitHub Actions
+and the Custom domain set to `bs.beiguo.fun`.
 
-This project's repository is `https://github.com/zyx663666/beh`. The published HTTPS site is `https://tianshanyun.cloud/beh/`. The standard address `https://zyx663666.github.io/beh/` redirects to that existing account-level domain. No DNS or domain setting was changed for this project.
+In Alibaba Cloud DNS, the `beiguo.fun` zone contains:
 
-Initial deployment succeeded on 2026-10-04: [build and deploy run](https://github.com/zyx663666/beyond-event-horizon/actions/runs/37170044522). The published home page and every manifest asset returned HTTP 200; online Observatory and Free Observation were opened in Edge, with no console errors observed.
+| Type | Host | Value | TTL |
+|---|---|---|---|
+| CNAME | bs | zyx663666.github.io | 10 minutes |
 
-The workflow uses Node.js 24, pinned official Actions, dependency caching and minimum job permissions. Sequence: checkout → read Pages metadata → `npm ci` → `npm run build` → `npm run check:dist` → upload dist artifact → deploy Pages. Only the deploy job gets pages write and OIDC token permission. Concurrent pushes replace an older in-progress deployment.
+The CNAME value contains no protocol or repository path. GitHub selects this project
+using its repository-level Custom domain setting. Other subdomains remain independently configurable.
 
-## Vite base and resources
+After changing the custom domain, redeploy the site so asset URLs use the new root path.
+DNS validation and HTTPS certificate issuance are separate from deployment; enable Enforce HTTPS
+in Pages settings once the certificate is available. A custom GitHub Actions publishing workflow
+does not require a CNAME file in the repository.
 
-`vite.config.mjs` keeps development at `/`. Builds/previews accept `VITE_BASE_PATH`, with a normalized trailing slash. Actions supplies `${{ steps.pages.outputs.base_path }}/`, so repository subpaths and future domain-root sites use the same workflow.
+## Automatic deployment and asset paths
 
-Shaders are bundled through `?raw`. Earth texture and scientific lookup data use `import.meta.env.BASE_URL`. All mode links are query-relative, retaining the deployment directory. The favicon is rewritten by Vite. There are no external fonts, audio files or model downloads: system fonts, optional synthesized audio and procedural models are used.
+A push to `main` runs `.github/workflows/deploy-pages.yml`: read Pages configuration,
+install dependencies with Node.js 24, run tests, build, check assets, upload the artifact and deploy.
+Only the deployment job receives Pages write and OIDC permissions.
 
-The build disables copying the whole public folder. `scripts/deploy-assets.mjs` includes the Earth texture, attribution, favicon and four lensing/orbit assets; Vite adds JS/CSS and `.nojekyll`. Diagnostic stills, old Webb backgrounds, temporary archives, logs and source maps are excluded. `check-dist` checks file presence, HTML base links, runtime directory references and excluded-file patterns. Add new runtime assets to the manifest when introduced. The optional score is discovered from `src/content/audio.config.json`, included only when present, and requires a public redistribution declaration. No music or test tones ship in this release. The workflow also runs the timeline/audio tests before building.
+The configure-pages action supplies `base_path` to `VITE_BASE_PATH` for both the build
+and the asset checks. A project URL uses `/beyond-event-horizon/`; the custom domain uses `/`.
+Local development always uses `/`. Do not hardcode a repository prefix in runtime links.
 
-## Browser behavior
+Shaders are bundled through `?raw`. Texture, scientific data, audio and recorded-video paths
+inherit `import.meta.env.BASE_URL`. Mode links use relative query strings.
+The runtime manifest in `scripts/deploy-assets.mjs` includes the Earth texture, attribution,
+favicon, scientific lookup tables, the existing score, and an optional recorded MP4.
+The video is configured in `src/content/video.config.json` and is included only when present.
+Diagnostics, temporary captures, archives and source maps are excluded.
 
-Sound defaults to off. A user click resumes/creates AudioContext. Fullscreen is requested by a click, may be declined by the host browser, and does not block playback if unavailable. WebGL2 failures show a bilingual support message. The 16:9 stage is letterboxed instead of rearranged. No portrait/mobile design is offered.
+## Local verification
 
-Film queries remain usable: `quality=preview|target|ultra`, `debug=0|1`, paused keyframe `t=SECONDS`, event switches `event=0`, `gas=0`, `debris=0`. `t` uses the full film clock including the 36-second opening. Default is Observatory, `mode=free` is basic free observation, and `mode=lab` preserves the legacy laboratory. Audience links should omit diagnostic switches.
-
-## Local build and future domain
+For a custom-domain build:
 
 ```powershell
-npm ci
-$env:VITE_BASE_PATH='/beh/'
+$env:VITE_BASE_PATH='/'
 npm run build
 npm run check:dist
 npm run preview -- --port 5177 --strictPort
 ```
 
-For a future custom domain, configure it in GitHub Pages Settings and set the required DNS records according to GitHub guidance. Then redeploy: Pages metadata will supply the root base. No domain purchase, DNS change or CNAME is part of this pass.
+Open `http://127.0.0.1:5177/`. To verify repository-subpath compatibility, repeat with
+`VITE_BASE_PATH=/beyond-event-horizon/` and open that pathname instead.
 
-Official references: [Vite static deployment](https://vite.dev/guide/static-deploy.html), [GitHub publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site), [custom-domain setup](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
+## Browser behavior
+
+The default mode is Observatory; `mode=film` starts the directed journey, `mode=free`
+opens free observation, and `mode=offline` opens the standalone recorded-video player.
+The recorded player creates no WebGL renderer. Without its MP4, it displays a waiting message.
+Realtime modes require WebGL2 and desktop hardware acceleration. The presentation retains
+its 16:9 stage with letterboxing. Music requires a user gesture and follows the film clock.
+
+Official references: [GitHub custom-domain setup](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site),
+[GitHub DNS troubleshooting](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/troubleshooting-custom-domains-and-github-pages),
+[Alibaba Cloud DNS records](https://help.aliyun.com/zh/dns/pubz-add-parsing-record/).

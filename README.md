@@ -66,22 +66,22 @@ A display-space pass (`src/rendering/CinematicPass.ts`) sits after ACES and adds
 
 Repository: <https://github.com/zyx663666/beyond-event-horizon>
 
-Published site: <https://tianshanyun.cloud/beh/>
+Project domain: <https://bs.beiguo.fun/>
 
-The standard Pages address <https://zyx663666.github.io/beh/> redirects to the account's existing custom domain. This project did not change its DNS or domain configuration.
+The custom domain is bound to this repository in GitHub Pages. Its DNS record is `bs CNAME zyx663666.github.io`. HTTPS becomes available after GitHub completes domain validation and certificate issuance.
 
 Pushes to main build and deploy via `.github/workflows/deploy-pages.yml`. In repository Settings → Pages, set Source to GitHub Actions. The workflow obtains the site base pathname from Pages configuration. Local development continues to use `/`.
 
 For a production subpath check:
 
 ```powershell
-$env:VITE_BASE_PATH='/beh/'
+$env:VITE_BASE_PATH='/beyond-event-horizon/'
 npm run build
 npm run check:dist
 npm run preview -- --port 5177 --strictPort
 ```
 
-Open <http://127.0.0.1:5177/beh/>. Deployment details and future custom-domain support are in [GitHub Pages guide](docs/github-pages.md).
+Open <http://127.0.0.1:5177/beyond-event-horizon/>. Deployment and custom-domain details are in [GitHub Pages guide](docs/github-pages.md).
 
 ## Scope and validation
 
