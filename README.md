@@ -47,7 +47,7 @@ Chinese is the primary visual language and English is secondary. UI content is i
 
 ## Offline video render
 
-Save the film exactly as it plays — canvas, HUD, subtitles and controls, with the score mixed in — as one MP4. In local preview the observatory page has a **保存视频 / SAVE VIDEO** button (lower right): it starts the render, shows progress, and downloads the MP4 when done. From the command line, double-click `render-video.bat`, or use the CLI for other settings. The default is **realtime capture**: the film plays once in a headless browser while the full page is recorded as a timestamped frame stream, then encoded. Recording takes the film length itself (7:06), so a full render finishes in roughly 15–25 minutes including encoding.
+Save the film exactly as it plays — canvas, HUD, subtitles and controls, with the score mixed in — as one MP4. To export from the project, double-click `render-video.bat`, or use the CLI for other settings. The default is **realtime capture**: the film plays once in a headless browser while the full page is recorded as a timestamped frame stream, then encoded. Recording takes the film length itself (7:06), so a full render finishes in roughly 15–25 minutes including encoding.
 
 ```
 npm run render:video                            # full film, realtime, 2560x1440 → render-output/
