@@ -78,12 +78,13 @@ export class FilmApp {
  private syncAudio(force=false){this.audio.update(this.controller.time,this.controller.playing,this.controller.rate,this.ready&&!document.hidden&&!this.host.contextLost,force);}
  private setDrive(index:number){const level=DRIVE_LEVELS[index];if(!level)return;if(index>0){this.driveIndex=index;this.controller.setRate(level.rate);if(this.controller.time>=EXPERIENCE_DURATION)this.seek(0);this.controller.playing=true;}else this.controller.hold();this.previous=null;this.syncAudio(true);this.updateUI();}
  private restart(){this.driveIndex=DEFAULT_DRIVE;this.controller.setRate(1);this.controller.playing=true;this.seek(0);}
- private status(message:string,error=false){const el=document.querySelector<HTMLElement>('#status')!;el.textContent=message;el.dataset.error=String(error);}
+ private status(message:string,error=false){if(this.disposed)return;const el=document.querySelector<HTMLElement>('#status')!;el.textContent=message;el.dataset.error=String(error);}
  private seek(t:number){
   this.controller.seek(t);this.previous=null;this.dataTick=-1;
   this.scene.update({elapsed:this.controller.time,delta:0});if(this.ready)this.pipeline.setCinematic(this.scene.cinematic);this.pipeline.render(0);this.syncAudio(true);this.updateUI();
  }
  async start(){
+  if(this.disposed)return;
   this.status(ui.preparing);await this.scene.prepare(this.host.renderer,this.host.hdr);if(this.disposed)return;
   this.scene.update({elapsed:this.controller.time,delta:0});this.pipeline.setCinematic(this.scene.cinematic);this.pipeline.render(0);if(this.host.shaderErrors)throw new Error('Film shader compilation failed');
   this.fpsAt=performance.now();this.frameCount=0;this.ready=true;document.body.classList.add('film-ready');this.status(ui.ready);this.previous=null;this.frame=requestAnimationFrame(this.tick);
@@ -146,6 +147,6 @@ export class FilmApp {
   Object.assign(this.root.dataset,{events:this.scene.enabledEvents,event:matterEvent?.id??'',feeding:String(this.scene.tidalEventEnabled),node:nodeAt(t).id,camera:this.scene.camera.position.toArray().map(v=>v.toFixed(5)).join(','),targetPresence:smooth(118,127,t).toFixed(5),prepass:'release',drive:DRIVE_LEVELS[this.controller.playing?this.driveIndex:0].id,rate:String(this.controller.playing?this.controller.rate:0),audio:this.audio.state,time:screen.toFixed(3),journeyTime:t.toFixed(3),localTime:s.local.toFixed(3),radius:s.model?s.r.toFixed(6):'',echoes:s.model?String(s.received):'0',phase:screen>=EXPERIENCE_DURATION?'finished':intro.active?'opening':s.art?'art':s.model?s.inside?'interior':'exterior':'archive',shot:shot.id,hold:'false',inspect:annotation});
  }
  private readonly resize=()=>{if(this.disposed)return;this.host.resize();this.scene.resize(this.host.width,this.host.height,this.host.pixelRatio);this.pipeline.resize(this.host.width,this.host.height,this.host.pixelRatio);};
- private async restore(){this.ready=false;this.syncAudio(true);cancelAnimationFrame(this.frame);this.pipeline.dispose();this.pipeline=new RenderPipeline(this.host.renderer,this.scene,this.config,this.host.hdr);this.resize();try{await this.start();}catch(err){this.status(String(err),true);}}
+ private async restore(){if(this.disposed)return;this.ready=false;this.syncAudio(true);cancelAnimationFrame(this.frame);this.pipeline.dispose();this.pipeline=new RenderPipeline(this.host.renderer,this.scene,this.config,this.host.hdr);this.resize();try{await this.start();}catch(err){this.status(String(err),true);}}
  dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();cancelAnimationFrame(this.frame);this.audio.dispose();this.flight.dispose();this.pipeline.dispose();this.scene.dispose();this.host.dispose();this.root.remove();document.body.classList.remove('film-mode','film-ready','experience-mode');}
 }

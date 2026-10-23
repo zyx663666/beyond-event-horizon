@@ -51,6 +51,7 @@ export class LensedSky {
     if(!response.ok)throw new Error(`Cannot load lensing asset: ${path}`);return response;
   }
   async prepare(renderer:WebGLRenderer,hdr:boolean):Promise<void> {
+    if(this.disposed)return;
     if(!this.data){
       const buffer=await (await this.load('schwarzschild.bin')).arrayBuffer();
       if(this.disposed)return;

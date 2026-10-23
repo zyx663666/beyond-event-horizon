@@ -53,12 +53,14 @@ export class App {
   }
 
   private setStatus(message: string, error = false): void {
+    if (this.disposed) return;
     const status = document.querySelector<HTMLElement>('#status')!;
     status.textContent = message;
     status.dataset.error = String(error);
   }
 
   async start(): Promise<void> {
+    if (this.disposed) return;
     this.setStatus('LOADING GEODESIC TABLES');
     await this.core.prepare(this.host.renderer, this.host.hdr);
     if (this.disposed) return;

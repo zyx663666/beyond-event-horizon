@@ -44,8 +44,9 @@ export class ObservatoryApp {
   if(!free){this.core.rig.recenter();this.core.rig.setZoom(1);}
   this.resize();this.root.dispatchEvent(new CustomEvent('observatory:changed',{detail:{mode:free?'free':'station',target:'BH-A17'},bubbles:true}));
  }
- private status(message:string,error=false){const el=document.querySelector<HTMLElement>('#status')!;el.textContent=message;el.dataset.error=String(error);}
+ private status(message:string,error=false){if(this.disposed)return;const el=document.querySelector<HTMLElement>('#status')!;el.textContent=message;el.dataset.error=String(error);}
  async start(){
+  if(this.disposed)return;
   this.status(ui.preparing);await this.core.prepare(this.host.renderer,this.host.hdr);if(this.disposed)return;
   this.core.update({elapsed:250,delta:0});this.pipeline.render(0);if(this.host.shaderErrors)throw new Error('Observatory shader compilation failed');
   this.ready=true;document.body.classList.add('observatory-ready');this.status(ui.ready);this.previous=null;this.frame=requestAnimationFrame(this.tick);
@@ -68,6 +69,6 @@ export class ObservatoryApp {
   this.core.camera.setViewOffset(this.host.width,this.host.height,this.free?0:-this.host.width*.18,0,this.host.width,this.host.height);
   this.pipeline.resize(this.host.width,this.host.height,this.host.pixelRatio);
  };
- private async restore(){this.ready=false;cancelAnimationFrame(this.frame);this.pipeline.dispose();this.pipeline=new RenderPipeline(this.host.renderer,this.core,this.config,this.host.hdr);this.resize();try{await this.start();}catch(err){this.status(String(err),true);}}
+ private async restore(){if(this.disposed)return;this.ready=false;cancelAnimationFrame(this.frame);this.pipeline.dispose();this.pipeline=new RenderPipeline(this.host.renderer,this.core,this.config,this.host.hdr);this.resize();try{await this.start();}catch(err){this.status(String(err),true);}}
  dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();this.input?.dispose();cancelAnimationFrame(this.frame);this.pipeline.dispose();this.core.dispose();this.host.dispose();this.root.remove();document.body.classList.remove('experience-mode','observatory-mode','observatory-ready');}
 }

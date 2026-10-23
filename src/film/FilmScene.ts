@@ -30,6 +30,7 @@ export class FilmScene implements VisualCore {
  private readonly bake = new Scene();
  private readonly stars: Starfield;
  private cube: WebGLCubeRenderTarget | null = null;
+ private disposed=false;
  private readonly radial = new Vector3(.18, .34, .923).normalize();
  /** Film-language state for the lens finish; updated every frame from film time. */
  cinematic:CinematicState={time:0,grain:.028,vignette:.24,aberration:.12,shock:0};
@@ -42,9 +43,11 @@ export class FilmScene implements VisualCore {
   this.scene.add(this.blackHole, this.journey.object, this.cosmos.object); this.update({ elapsed: 0, delta: 0 });
  }
  async prepare(renderer: WebGLRenderer, hdr: boolean) {
+  if(this.disposed)return;
   this.cube?.dispose(); this.cube = new WebGLCubeRenderTarget(this.config.lensing.cubeSize, { ...(hdr ? { type: HalfFloatType } : {}), depthBuffer: false, generateMipmaps: true, minFilter: LinearMipmapLinearFilter });
   new CubeCamera(.1, 240, this.cube).update(renderer, this.bake); this.uniforms.uEnvironment.value = this.cube.texture;
   const loaded = await Promise.allSettled([this.cosmos.prepare(this.cube.texture), this.journey.prepare()]);
+  if(this.disposed)return;
   for (const r of loaded) if (r.status === 'rejected') throw r.reason;
   this.blackHole.visible = true; this.cosmos.object.visible = true; this.journey.object.visible = true;
   await renderer.compileAsync(this.scene, this.camera);
@@ -93,7 +96,7 @@ export class FilmScene implements VisualCore {
   return{x:id==='relay'?.55:.49,y:id==='horizon'?.47:.43,reference:true};
  }
  resize(w: number, h: number, p: number) { this.camera.aspect = w / h; this.camera.updateProjectionMatrix(); this.shaders.resize(p); this.journey.resize(h, p); }
- dispose() { this.journey.dispose(); this.distant.dispose();this.cosmos.dispose(); this.material.dispose(); this.geometry.dispose(); this.stars.dispose(); this.shaders.dispose(); this.cube?.dispose(); }
+ dispose() { if(this.disposed)return;this.disposed=true;this.journey.dispose(); this.distant.dispose();this.cosmos.dispose(); this.material.dispose(); this.geometry.dispose(); this.stars.dispose(); this.shaders.dispose(); this.cube?.dispose(); }
 }
 
 

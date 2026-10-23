@@ -2,18 +2,18 @@ import { App } from './app/App';
 import { FilmApp } from './film/FilmApp';
 import { ObservatoryApp } from './experience/ObservatoryApp';
 import { OfflineFilmApp } from './experience/OfflineFilmApp';
+import { AppLifecycle } from './core/AppLifecycle';
 import legacy from './content/legacy.html?raw';
 import { title } from './content/title';
 import { installViewportControls } from './experience/ViewportControls';
 import './style.css';
 import './experience.css';
 
-let app: App | FilmApp | ObservatoryApp | OfflineFilmApp | undefined;
+const runtime = new AppLifecycle(reportError);
 const lifecycle = new AbortController();
 installViewportControls(lifecycle.signal);
 function launch(userInitiated=false): void {
-app?.dispose();
-try {
+runtime.launch(() => {
   document.title=`${title.zh} · ${title.en}`;
   const mode=new URLSearchParams(location.search).get('mode');
   if(mode==='lab'){
@@ -23,9 +23,8 @@ try {
     lab.innerHTML=legacy;
   }
   const canvas=document.querySelector<HTMLCanvasElement>('#scene')!;
-  app = mode==='offline'?new OfflineFilmApp(userInitiated):mode==='film'?new FilmApp(canvas,userInitiated):mode==='lab'?new App(canvas):new ObservatoryApp(canvas);
-  app.start().catch(reportError);
-} catch (error) { reportError(error); }
+  return mode==='offline'?new OfflineFilmApp(userInitiated):mode==='film'?new FilmApp(canvas,userInitiated):mode==='lab'?new App(canvas):new ObservatoryApp(canvas);
+});
 }
 launch();
 // Stay in the same document so START JOURNEY retains the trusted audio gesture.
@@ -36,15 +35,14 @@ document.addEventListener('click',event=>{
  event.preventDefault();history.pushState(null,'',url);launch(true);
 },{signal:lifecycle.signal});
 window.addEventListener('popstate',()=>launch(),{signal:lifecycle.signal});
-window.addEventListener("pagehide", () => app?.dispose(), { signal: lifecycle.signal });
+window.addEventListener("pagehide", () => runtime.dispose(), { signal: lifecycle.signal });
 window.addEventListener("pageshow", event => { if (event.persisted) launch(); }, { signal: lifecycle.signal });
 function reportError(error: unknown): void {
   console.error('[BEH]', error);
   const status = document.querySelector<HTMLElement>('#status')!;
   status.textContent = error instanceof Error ? error.message : String(error);
   status.dataset.error = 'true';
-  app?.dispose();
   document.body.classList.add('experience-mode');
 }
-if (import.meta.hot) import.meta.hot.dispose(() => { lifecycle.abort(); app?.dispose(); });
+if (import.meta.hot) import.meta.hot.dispose(() => { lifecycle.abort(); runtime.dispose(); });
 
