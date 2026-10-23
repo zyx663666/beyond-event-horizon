@@ -45,7 +45,7 @@ test('late play resolution cannot restart a muted or disposed media element',asy
 });
 test('short scores stop, optional looping and offset follow the film clock',async()=>{
  const m=new Media();m.duration=20;const a=new FilmAudio({...config,offsetSeconds:10,loop:true},'score.mp3',EXPERIENCE_DURATION,m);a.update(5,true,1,true);a.enableFromGesture();await flush();a.update(5,true,1,true);assert.equal(m.paused,true);a.update(35,true,1,true);await flush();assert.equal(m.currentTime,5);assert.equal(m.paused,false);a.dispose();
- const b=new FilmAudio(config,'score.mp3',EXPERIENCE_DURATION,new Media());b.element.duration=10;b.enableFromGesture();await flush();b.update(11,true,1,true);assert.equal(b.state,'ended');assert.equal(b.element.paused,true);b.dispose();
+ const b=new FilmAudio({...config,loop:false},'score.mp3',EXPERIENCE_DURATION,new Media());b.element.duration=10;b.enableFromGesture();await flush();b.update(11,true,1,true);assert.equal(b.state,'ended');assert.equal(b.element.paused,true);b.dispose();
 });
 test('all drive levels preserve full journey cue order and causal landmarks',()=>{
  for(const level of DRIVE_LEVELS){const c=new JourneyController(EXPERIENCE_DURATION,INTRO_DURATION),cues=[];c.setRate(level.rate);c.onCue(cue=>cues.push(cue.id));if(level.rate===0){c.advance(999);assert.equal(c.time,0);continue;}

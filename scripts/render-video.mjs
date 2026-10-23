@@ -127,7 +127,7 @@ if (shaderErrors !== '0') throw new Error('Film shader compilation failed in the
 const hasScore = existsSync(scorePath);
 if (!hasScore) console.log('score.mp3 not found — rendering video only');
 const audioArgs = videoLengthSeconds => hasScore
-  ? ['-i', scorePath, '-filter_complex',
+  ? [...(audioConfig.loop ? ['-stream_loop', '-1'] : []), '-i', scorePath, '-filter_complex',
      `[1:a]volume=${audioConfig.volume},afade=t=in:st=0:d=${audioConfig.fadeIn},afade=t=out:st=${Math.max(0, videoLengthSeconds - audioConfig.fadeOut)}:d=${audioConfig.fadeOut}[a]`,
      '-map', '0:v', '-map', '[a]']
   : ['-an'];

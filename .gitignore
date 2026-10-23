@@ -25,3 +25,7 @@ public/experience-stills/
 
 # Offline render output.
 render-output/
+
+# Full-resolution local film and generated submission bundles.
+/public/video/journey.mp4
+/提交打包/

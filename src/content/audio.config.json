@@ -5,7 +5,8 @@
   "fadeIn": 4,
   "fadeOut": 5,
   "offsetSeconds": 0,
-  "loop": false,
+  "loop": true,
   "highSpeedGain": 0.24,
-  "publishAllowed": true
+  "publishAllowed": true,
+  "title": "深空独航"
 }
